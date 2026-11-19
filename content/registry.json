@@ -1,3 +1,37 @@
 {
-  "campaigns": []
+  "campaigns": [
+    {
+      "issue": "2026-11-19",
+      "brand": "City of Gothenburg",
+      "campaign": "Hemlagat",
+      "key": "city of gothenburg|hemlagat",
+      "sources": [
+        "https://www.thestable.com.au/bbdo-nordics-city-of-gothenburg-cycling-tailors-replace-the-urge-to-black-week-purchase-with-at-home-repairs/",
+        "https://www.dagensps.se/foretag/kommun-skickar-gratis-skraddare-vill-fa-folk-sluta-kopa-nytt/",
+        "https://www.metromode.se/mode/goteborg-skickar-ut-gratis-skraddare-under-black-week-vill-att-du-lagar-i-stallet-for-koper-nytt/"
+      ]
+    },
+    {
+      "issue": "2026-11-19",
+      "brand": "ChipsMore!",
+      "campaign": "18 Unrestricted",
+      "key": "chipsmore|18 unrestricted",
+      "sources": [
+        "https://campaignbriefasia.com/2026/11/16/chipsmore-and-leo-indonesia-flip-the-age-check-for-younger-gamers-with-18-unrestricted/",
+        "https://www.contentgrip.com/chipsmore-gta-discord-gaming/",
+        "https://adindex.ru/news/adyummy/2026/11/16/351251.phtml"
+      ]
+    },
+    {
+      "issue": "2026-11-19",
+      "brand": "KFC Australia",
+      "campaign": "Funeral for Ann Alibi",
+      "key": "kfc australia|funeral for ann alibi",
+      "sources": [
+        "https://www.mediaweek.com.au/kfc-stages-funeral-gta-vi-fans-alibi",
+        "https://www.dexerto.com/gta/kfc-is-hosting-a-fake-funeral-so-gta-6-fans-can-take-the-day-off-3428598",
+        "https://campaignbrief.com/kfc-australia-holds-a-fake-funeral-for-ann-alibi-so-gamers-can-skip-work-for-gta-vi/"
+      ]
+    }
+  ]
 }
