@@ -6,19 +6,13 @@
 import { mkdirSync, writeFileSync, rmSync, copyFileSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { ROOT, loadConfig, loadIssues, scheduleFrom } from './lib/content.mjs';
-import { nextIssueDay, addDays, todayIn } from './lib/schedule.mjs';
+import { ROOT, loadConfig, loadIssues } from './lib/content.mjs';
 import { issuePage, archivePage, emptyPage, notFoundPage } from './templates.mjs';
 
-export function build({ root = ROOT, outDir = join(root, 'dist'), today } = {}) {
+export function build({ root = ROOT, outDir = join(root, 'dist') } = {}) {
   const site = loadConfig(root);
   const issues = loadIssues(root).map((i) => i.data);
-  const buildDay = today ?? todayIn(site.timezone);
-
   const latest = issues.at(-1);
-  // The next issue Monday that is still ahead: after the latest issue and not before today.
-  const from = latest && latest.date >= buildDay ? addDays(latest.date, 1) : buildDay;
-  const nextIssueDate = nextIssueDay(from, scheduleFrom(site));
 
   const write = (path, html) => {
     const full = join(outDir, path);
@@ -30,14 +24,14 @@ export function build({ root = ROOT, outDir = join(root, 'dist'), today } = {}) 
   mkdirSync(outDir, { recursive: true });
 
   if (latest) {
-    write('index.html', issuePage({ site, issues, issue: latest, root: './', nextIssueDate }));
+    write('index.html', issuePage({ site, issues, issue: latest, root: './' }));
     for (const issue of issues) {
-      write(`issues/${issue.date}/index.html`, issuePage({ site, issues, issue, root: '../../', nextIssueDate }));
+      write(`issues/${issue.date}/index.html`, issuePage({ site, issues, issue, root: '../../' }));
     }
   } else {
-    write('index.html', emptyPage({ site, root: './', nextIssueDate }));
+    write('index.html', emptyPage({ site, root: './' }));
   }
-  write('issues/index.html', archivePage({ site, issues, root: '../', nextIssueDate }));
+  write('issues/index.html', archivePage({ site, issues, root: '../' }));
   write('404.html', notFoundPage({ site, siteUrl: new URL(site.url).pathname }));
 
   copyFileSync(join(root, 'src', 'styles.css'), join(outDir, 'styles.css'));
@@ -45,10 +39,10 @@ export function build({ root = ROOT, outDir = join(root, 'dist'), today } = {}) 
     copyFileSync(join(root, 'public', name), join(outDir, name));
   }
   writeFileSync(join(outDir, '.nojekyll'), '');
-  return { outDir, pages: issues.length + 3, nextIssueDate };
+  return { outDir, pages: issues.length + 3 };
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const result = build();
-  console.log(`Built ${result.pages} pages into ${result.outDir}. Next issue ${result.nextIssueDate}.`);
+  console.log(`Built ${result.pages} pages into ${result.outDir}.`);
 }

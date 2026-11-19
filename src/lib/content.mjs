@@ -32,11 +32,3 @@ export function loadRegistry(root = ROOT) {
   const path = join(root, 'content', 'registry.json');
   return existsSync(path) ? readJson(path) : { campaigns: [] };
 }
-
-export function scheduleFrom(config) {
-  return {
-    anchorMonday: config.anchorMonday,
-    intervalWeeks: config.intervalWeeks,
-    graceDays: config.graceDays,
-  };
-}

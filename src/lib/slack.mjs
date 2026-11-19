@@ -1,7 +1,7 @@
 // Slack messages. Plain text through an incoming webhook.
 // With no webhook URL the send is skipped and reported as such: it never throws.
 
-import { formatDateLong } from './schedule.mjs';
+import { formatDateLong } from './dates.mjs';
 
 function firstSentence(text) {
   const match = String(text).match(/^.*?[.!?](?=\s|$)/);

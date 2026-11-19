@@ -1,7 +1,7 @@
 // Structural validation of issues and the registry. Pure functions, no network or disk.
 // Link checking lives in links.mjs.
 
-import { isIsoDate, daysBetween } from './schedule.mjs';
+import { isIsoDate, daysBetween } from './dates.mjs';
 
 const LIMITS = {
   headline: 90, brand: 40, campaign: 44, category: 24, market: 28,

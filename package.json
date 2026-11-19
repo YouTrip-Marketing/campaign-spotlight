@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Fortnightly digest of standout marketing campaigns. Static site built from JSON issue files.",
+  "description": "Digest of standout marketing campaigns. Static site built from JSON issue files.",
   "engines": { "node": ">=20" },
   "scripts": {
-    "guard": "node scripts/guard.mjs",
+    "next-issue": "node scripts/next-issue.mjs",
     "registry": "node scripts/registry.mjs",
     "validate": "node scripts/validate.mjs",
     "validate:links": "node scripts/validate.mjs --links all",
     "build": "node src/build.mjs",
+    "slack-message": "node scripts/slack.mjs latest --dry-run",
     "test": "node --test"
   }
 }

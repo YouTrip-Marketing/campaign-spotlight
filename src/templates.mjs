@@ -1,6 +1,6 @@
 // HTML for every page. Plain template strings, all content escaped.
 
-import { formatDate, formatDateLong } from './lib/schedule.mjs';
+import { formatDate, formatDateLong } from './lib/dates.mjs';
 
 const RAIL_SIZE = 4;
 
@@ -65,9 +65,9 @@ function rail(issues, root, current) {
   return `  <nav class="rail mono" aria-label="Issues">\n${pills.join('\n')}\n  </nav>`;
 }
 
-function foot(root, nextIssueDate) {
+function foot(site, root) {
   return `  <footer class="foot mono">
-    <span>Next issue ${esc(formatDateLong(nextIssueDate))}</span>
+    <span>${esc(site.name)}</span>
     <a href="${root}issues/">All issues &rarr;</a>
   </footer>`;
 }
@@ -92,7 +92,7 @@ function card(c, slot) {
     </article>`;
 }
 
-export function issuePage({ site, issues, issue, root, nextIssueDate }) {
+export function issuePage({ site, issues, issue, root }) {
   const cards = issue.campaigns.map((c, i) => card(c, i + 1)).join('\n\n');
   const body = `
 ${rail(issues, root, issue.date)}
@@ -111,12 +111,12 @@ ${cards}
 
   </section>
 
-${foot(root, nextIssueDate)}
+${foot(site, root)}
 `;
   return page({ site, root, body, title: `${site.name} · Issue ${pad(issue.number)}` });
 }
 
-export function archivePage({ site, issues, root, nextIssueDate }) {
+export function archivePage({ site, issues, root }) {
   const rows = [...issues].reverse().map((issue) => {
     const chips = issue.campaigns
       .map((c, i) => `<span class="p${i + 1}">${esc(c.brand)} <em>${esc(c.campaign)}</em></span>`)
@@ -140,18 +140,18 @@ ${rail(issues, root, 'archive')}
 
 ${rows.length ? `  <section class="list">\n${rows.join('\n')}\n  </section>` : '  <section class="list none mono">No issues yet</section>'}
 
-${foot(root, nextIssueDate)}
+${foot(site, root)}
 `;
   return page({ site, root, body, title: `${site.name} · All issues` });
 }
 
-export function emptyPage({ site, root, nextIssueDate }) {
+export function emptyPage({ site, root }) {
   const body = `
 ${rail([], root, null)}
 
   <section class="hero first">
     <div class="big">00</div>
-    <div class="info"><div class="date mono">First issue ${esc(formatDateLong(nextIssueDate))}</div></div>
+    <div class="info"><div class="date mono">No issues yet</div></div>
   </section>
 `;
   return page({ site, root, body, title: site.name });

@@ -6,8 +6,7 @@ import { join } from 'node:path';
 import { build } from '../src/build.mjs';
 import { esc } from '../src/templates.mjs';
 import { issueMessage, failureMessage, send } from '../src/lib/slack.mjs';
-import { ROOT, loadConfig, scheduleFrom } from '../src/lib/content.mjs';
-import { isIssueDay } from '../src/lib/schedule.mjs';
+import { ROOT, loadConfig } from '../src/lib/content.mjs';
 
 const config = loadConfig();
 const fixture = JSON.parse(readFileSync(join(ROOT, 'test', 'fixtures', 'issue.json'), 'utf8'));
@@ -25,13 +24,12 @@ function tempRepo(withIssues) {
   }
   return root;
 }
-const schedule = scheduleFrom(config);
 
 test('build writes every page, with noindex and no em dashes', () => {
   const root = tempRepo(issues);
   const outDir = join(root, 'dist');
   try {
-    build({ root, outDir, today: '2026-11-19' });
+    build({ root, outDir });
     const pages = ['index.html', 'issues/index.html', '404.html', ...issues.map((i) => `issues/${i.date}/index.html`)];
     for (const page of pages) {
       const html = readFileSync(join(outDir, page), 'utf8');
@@ -49,12 +47,7 @@ test('build writes every page, with noindex and no em dashes', () => {
       assert.ok(home.includes(esc(c.campaign)), c.campaign);
       for (const s of c.sources) assert.ok(home.includes(`href="${esc(s.url)}"`), s.url);
     }
-    // The footer date depends on the issues in the repo, so check its properties, not a fixed date.
-    const next = home.match(/Next issue Mon (\d{1,2} \w{3} \d{4})/);
-    assert.ok(next, 'footer names a Monday');
-    const nextDate = new Date(`${next[1]} UTC`).toISOString().slice(0, 10);
-    assert.ok(isIssueDay(nextDate, schedule), `${nextDate} is an issue day`);
-    assert.ok(nextDate > latest.date && nextDate >= '2026-11-19', `${nextDate} is still ahead`);
+    assert.ok(!/Next issue|First issue/.test(home), 'no fixed-schedule label');
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
@@ -64,17 +57,16 @@ test('build with zero issues gives a clean empty state', () => {
   const root = tempRepo([]);
   const outDir = join(root, 'dist');
   try {
-    build({ root, outDir, today: '2026-11-19' });
-    const first = `Mon ${new Date(`${config.anchorMonday}T00:00:00Z`).getUTCDate()} `;
+    build({ root, outDir });
     const home = readFileSync(join(outDir, 'index.html'), 'utf8');
     const archive = readFileSync(join(outDir, 'issues/index.html'), 'utf8');
-    assert.match(home, /First issue Mon \d/);
-    assert.ok(home.includes(`First issue ${first}`), 'home names the anchor Monday');
+    assert.match(home, /No issues yet/);
     assert.match(archive, /0 issues/);
-    assert.ok(archive.includes(`Next issue ${first}`));
+    assert.match(archive, /No issues yet/);
     for (const html of [home, archive, readFileSync(join(outDir, '404.html'), 'utf8')]) {
       assert.match(html, /noindex, nofollow/);
       assert.ok(!html.includes('undefined') && !html.includes('NaN'));
+      assert.ok(!/Next issue|First issue/.test(html), 'no fixed-schedule label');
       assert.ok(!html.includes('\u2014'));
     }
     assert.ok(!existsSync(join(outDir, 'issues', '2026-11-19')));
