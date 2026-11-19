@@ -1,22 +1,37 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, readFileSync, existsSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, existsSync, rmSync, mkdirSync, cpSync, copyFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { build } from '../src/build.mjs';
 import { esc } from '../src/templates.mjs';
 import { issueMessage, failureMessage, send } from '../src/lib/slack.mjs';
-import { loadConfig, loadIssues, scheduleFrom } from '../src/lib/content.mjs';
+import { ROOT, loadConfig, scheduleFrom } from '../src/lib/content.mjs';
 import { isIssueDay } from '../src/lib/schedule.mjs';
 
 const config = loadConfig();
-const issues = loadIssues().map((i) => i.data);
+const fixture = JSON.parse(readFileSync(join(ROOT, 'test', 'fixtures', 'issue.json'), 'utf8'));
+const issues = [fixture];
+
+/** A throwaway copy of the repo with the given issues, so tests never depend on live content. */
+function tempRepo(withIssues) {
+  const root = mkdtempSync(join(tmpdir(), 'spotlight-'));
+  for (const dir of ['config', 'public']) cpSync(join(ROOT, dir), join(root, dir), { recursive: true });
+  mkdirSync(join(root, 'src'));
+  copyFileSync(join(ROOT, 'src', 'styles.css'), join(root, 'src', 'styles.css'));
+  mkdirSync(join(root, 'content', 'issues'), { recursive: true });
+  for (const issue of withIssues) {
+    writeFileSync(join(root, 'content', 'issues', `${issue.date}.json`), JSON.stringify(issue));
+  }
+  return root;
+}
 const schedule = scheduleFrom(config);
 
 test('build writes every page, with noindex and no em dashes', () => {
-  const outDir = mkdtempSync(join(tmpdir(), 'spotlight-'));
+  const root = tempRepo(issues);
+  const outDir = join(root, 'dist');
   try {
-    build({ outDir, today: '2026-11-19' });
+    build({ root, outDir, today: '2026-11-19' });
     const pages = ['index.html', 'issues/index.html', '404.html', ...issues.map((i) => `issues/${i.date}/index.html`)];
     for (const page of pages) {
       const html = readFileSync(join(outDir, page), 'utf8');
@@ -41,7 +56,30 @@ test('build writes every page, with noindex and no em dashes', () => {
     assert.ok(isIssueDay(nextDate, schedule), `${nextDate} is an issue day`);
     assert.ok(nextDate > latest.date && nextDate >= '2026-11-19', `${nextDate} is still ahead`);
   } finally {
-    rmSync(outDir, { recursive: true, force: true });
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('build with zero issues gives a clean empty state', () => {
+  const root = tempRepo([]);
+  const outDir = join(root, 'dist');
+  try {
+    build({ root, outDir, today: '2026-11-19' });
+    const first = `Mon ${new Date(`${config.anchorMonday}T00:00:00Z`).getUTCDate()} `;
+    const home = readFileSync(join(outDir, 'index.html'), 'utf8');
+    const archive = readFileSync(join(outDir, 'issues/index.html'), 'utf8');
+    assert.match(home, /First issue Mon \d/);
+    assert.ok(home.includes(`First issue ${first}`), 'home names the anchor Monday');
+    assert.match(archive, /0 issues/);
+    assert.ok(archive.includes(`Next issue ${first}`));
+    for (const html of [home, archive, readFileSync(join(outDir, '404.html'), 'utf8')]) {
+      assert.match(html, /noindex, nofollow/);
+      assert.ok(!html.includes('undefined') && !html.includes('NaN'));
+      assert.ok(!html.includes('\u2014'));
+    }
+    assert.ok(!existsSync(join(outDir, 'issues', '2026-11-19')));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
   }
 });
 

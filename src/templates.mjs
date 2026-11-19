@@ -138,9 +138,7 @@ ${rail(issues, root, 'archive')}
     <div class="count mono">${plural(issues.length, 'issue')}</div>
   </section>
 
-  <section class="list">
-${rows.join('\n')}
-  </section>
+${rows.length ? `  <section class="list">\n${rows.join('\n')}\n  </section>` : '  <section class="list none mono">No issues yet</section>'}
 
 ${foot(root, nextIssueDate)}
 `;
@@ -149,7 +147,9 @@ ${foot(root, nextIssueDate)}
 
 export function emptyPage({ site, root, nextIssueDate }) {
   const body = `
-  <section class="hero">
+${rail([], root, null)}
+
+  <section class="hero first">
     <div class="big">00</div>
     <div class="info"><div class="date mono">First issue ${esc(formatDateLong(nextIssueDate))}</div></div>
   </section>

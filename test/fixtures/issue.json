@@ -1,0 +1,101 @@
+{
+  "number": 1,
+  "date": "2026-11-23",
+  "headline": "Fixture headline for tests",
+  "windowDays": 14,
+  "campaigns": [
+    {
+      "brand": "Fixture Brand 1",
+      "campaign": "Fixture Idea 1",
+      "category": "Category 1",
+      "market": "Testland",
+      "tags": [
+        "Out of home",
+        "Partnerships",
+        "Launch"
+      ],
+      "launched": "2026-11-18",
+      "did": "They did a thing. Then another thing.",
+      "why": "It worked.",
+      "steal": "Do the thing.",
+      "scores": {
+        "originality": 4,
+        "craft": 5,
+        "proof": 5,
+        "stealable": 3
+      },
+      "sources": [
+        {
+          "label": "One",
+          "url": "https://one.example.com/0"
+        },
+        {
+          "label": "Two",
+          "url": "https://two.example.com/0"
+        }
+      ]
+    },
+    {
+      "brand": "Fixture Brand 2",
+      "campaign": "Fixture Idea 2",
+      "category": "Category 2",
+      "market": "Testland",
+      "tags": [
+        "Packaging",
+        "Retail",
+        "Community"
+      ],
+      "launched": "2026-11-18",
+      "did": "They did a thing. Then another thing.",
+      "why": "It worked.",
+      "steal": "Do the thing.",
+      "scores": {
+        "originality": 5,
+        "craft": 4,
+        "proof": 2,
+        "stealable": 4
+      },
+      "sources": [
+        {
+          "label": "One",
+          "url": "https://one.example.com/1"
+        },
+        {
+          "label": "Two",
+          "url": "https://two.example.com/1"
+        }
+      ]
+    },
+    {
+      "brand": "Fixture Brand 3",
+      "campaign": "Fixture Idea 3",
+      "category": "Category 3",
+      "market": "Testland",
+      "tags": [
+        "Manga",
+        "Collectible",
+        "Event"
+      ],
+      "launched": "2026-11-18",
+      "did": "They did a thing. Then another thing.",
+      "why": "It worked.",
+      "steal": "Do the thing.",
+      "scores": {
+        "originality": 4,
+        "craft": 4,
+        "proof": 4,
+        "stealable": 4
+      },
+      "sources": [
+        {
+          "label": "One",
+          "url": "https://one.example.com/2"
+        },
+        {
+          "label": "Two",
+          "url": "https://two.example.com/2"
+        }
+      ]
+    }
+  ]
+}

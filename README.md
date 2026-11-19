@@ -41,11 +41,9 @@ If only 2 campaigns clear the bar, the issue runs with 2. If 0 or 1 clear it, th
 
 Issues are dated on every second Monday, counted from `anchorMonday` in [`config/site.json`](config/site.json).
 
-**The anchor is a placeholder: Monday 30 Nov 2026.** Change that one value to move the schedule. It must be a Monday.
+The first issue is Monday 23 Nov 2026, then 7 Dec, 21 Dec and so on. Change `anchorMonday` to move the schedule. It must be a Monday.
 
-The guard counts whole fortnights from the anchor instead of using ISO week numbers, because odd and even week numbers break at New Year (2026 has 53 weeks). A run up to two days late still files the issue under its Monday. A rerun is skipped once the issue file exists.
-
-Issue 01 (19 Nov 2026) was a dry run written before the anchor date, so it sits outside the Monday rhythm.
+The guard counts whole fortnights from the anchor instead of using ISO week numbers, because odd and even week numbers break at New Year (2026 has 53 weeks). The date is worked out in Singapore time whatever clock the machine runs on. A run up to two days late still files the issue under its Monday. A rerun is skipped once the issue file exists.
 
 ## Run it locally
 
@@ -58,7 +56,7 @@ npm run validate          # structure checks
 npm run validate:links    # structure checks plus every source link
 npm run registry          # rebuild content/registry.json from the issues
 npm run build             # static site into dist/
-node scripts/slack.mjs issue 2026-11-19.json --dry-run   # print the Slack message
+node scripts/slack.mjs latest --dry-run   # print the Slack message for the latest issue
 ```
 
 To preview: `npm run build`, then serve `dist/` with any static server.
@@ -90,4 +88,3 @@ test/                    unit tests (node --test)
 
 - [ ] Create the scheduled routine with the prompt in `routine/PROMPT.md`, weekly on Monday morning, with push access to this repository
 - [ ] Create a Slack incoming webhook for the chosen channel and save it as the repository secret `SLACK_WEBHOOK_URL`
-- [ ] Confirm `anchorMonday` in `config/site.json`

@@ -21,12 +21,14 @@ git pull --ff-only
 node scripts/guard.mjs
 ```
 
+The script works out today's date in Singapore time from `config/site.json`, whatever clock or timezone this machine uses. Do not work out the date, the issue date or the issue number yourself, and do not pass `--date`.
+
 It prints JSON. If `"run": false`, stop now. Reply with the `reason` and do nothing else: no research, no commit.
 
 If `"run": true`, note these values and use them exactly:
 
 - `issueDate`: the date of this issue (a Monday). It is also the file name.
-- `issueNumber`
+- `issueNumber`: the first issue is 1.
 - `issueFile`
 - `window14From` and `window28From`: the earliest launch dates allowed for the 14 day and 28 day windows.
 
@@ -34,7 +36,7 @@ The guard already covers: off weeks (it counts whole fortnights from the anchor 
 
 ## Step 2. Read what has already run
 
-Read `content/registry.json`. It lists every campaign ever featured, with its source links. You may not feature any of them again. The same brand is fine only for a different campaign. Do not reuse a source link from the registry.
+Read `content/registry.json`. It lists every campaign ever featured, with its source links. Before the first issue it is empty (`"campaigns": []`), which is normal: nothing is ruled out yet. You may not feature any of them again. The same brand is fine only for a different campaign. Do not reuse a source link from the registry.
 
 ## Step 3. Find candidates
 
@@ -73,7 +75,7 @@ A candidate goes forward only if all of these hold.
 1. **Recency.** It launched on or after `window14From`, and not after `issueDate`. Use the earliest publication date you can find across your sources as the launch date, not the date of the article you happened to find first. Trade sites often write up campaigns weeks late. If a campaign started earlier but its main moment (the launch it was building to, the event day) fell inside the window, record both `launched` and `peaked`; recency is then judged on `peaked`. Do not use `peaked` for a campaign that is merely still being written about.
 2. **Two sources you opened.** At least two different publications, each of which you opened and read in this run. A search result snippet is not a source. The same press release on two sites counts once, unless at least one of them adds its own reporting. A paid press release wire can be a third source but never one of the two. Label a non-English source with its language, and a press release as such.
 3. **Links that load.** Each source link returns the article to a plain request without a login. If a site blocks you, find another source for the same facts. The publish workflow rejects dead links and needs two confirmed working links per campaign.
-4. **Not a repeat.** Not in the registry.
+4. **Not a repeat.** Not in the registry, if the registry has entries.
 5. **It is a campaign or a launch.** Not an agency appointment, an award entry for old work, a trend piece, or a results round-up.
 
 ## Step 5. Score
@@ -101,12 +103,12 @@ If fewer than three qualify inside 14 days, widen to `window28From` and look aga
 
 ## Step 6. Write the issue
 
-Create `issueFile` with exactly this shape:
+Create `issueFile` with exactly this shape. The values below are examples; `number` and `date` must be the guard's `issueNumber` and `issueDate`:
 
 ```json
 {
-  "number": 2,
-  "date": "2026-11-30",
+  "number": 1,
+  "date": "2026-11-23",
   "headline": "One line that names all the campaigns by their idea, not their brand",
   "windowDays": 14,
   "campaigns": [
@@ -116,7 +118,7 @@ Create `issueFile` with exactly this shape:
       "category": "Snacks",
       "market": "Malaysia",
       "tags": ["Packaging", "Retail"],
-      "launched": "2026-11-16",
+      "launched": "2026-11-12",
       "peaked": "2026-11-19",
       "did": "What they did. Two to four plain sentences.",
       "why": "Why it worked. One to three sentences, including the proof and who reported it.",

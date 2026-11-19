@@ -1,4 +1,5 @@
 import test from 'node:test';
+import { loadConfig, scheduleFrom } from '../src/lib/content.mjs';
 import assert from 'node:assert/strict';
 import {
   guard, isIssueDay, nextIssueDay, addDays, daysBetween, isIsoDate, weekday, todayIn, formatDateLong,
@@ -82,4 +83,25 @@ test('isIssueDay and nextIssueDay', () => {
   assert.equal(nextIssueDay('2026-11-30', schedule), '2026-11-30');
   assert.equal(nextIssueDay('2026-12-01', schedule), '2026-12-14');
   assert.equal(nextIssueDay('2026-12-29', schedule), '2027-01-11');
+});
+
+test('the configured anchor: first issue day, off weeks, New Year, issue numbering inputs', () => {
+  const live = scheduleFrom(loadConfig());
+  const go = (today, existing = []) => guard({ today, schedule: live, existingIssueDates: existing });
+  const anchor = live.anchorMonday;
+  assert.equal(weekday(anchor), 1);
+  assert.deepEqual(go(anchor), { run: true, reason: `Issue day ${anchor}.`, issueDate: anchor });
+  assert.equal(go(addDays(anchor, -7)).run, false);
+  assert.equal(go(addDays(anchor, 7)).run, false);
+  assert.equal(go(addDays(anchor, 14)).run, true);
+  assert.equal(go(anchor, [anchor]).run, false);
+  // Every Monday for a year alternates run, skip from the anchor, across New Year.
+  for (let i = 0; i < 53; i += 1) assert.equal(go(addDays(anchor, i * 7)).run, i % 2 === 0);
+});
+
+test('a cloud machine on UTC still gets the Singapore date at 08:00 SGT', () => {
+  // 08:00 SGT on Mon 23 Nov 2026 is 00:00 UTC the same day; 07:00 SGT is still Sunday in UTC.
+  assert.equal(todayIn('Asia/Singapore', new Date('2026-11-23T00:00:00Z')), '2026-11-23');
+  assert.equal(todayIn('Asia/Singapore', new Date('2026-11-22T23:00:00Z')), '2026-11-23');
+  assert.equal(todayIn('UTC', new Date('2026-11-22T23:00:00Z')), '2026-11-22');
 });
