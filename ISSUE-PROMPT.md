@@ -120,6 +120,7 @@ Create `issueFile` with exactly this shape. The values below are examples; `numb
       "tags": ["Packaging", "Retail"],
       "launched": "2026-11-12",
       "peaked": "2026-11-19",
+      "summary": "One sentence that stands alone and does not name the brand or campaign.",
       "did": "What they did. Two to four plain sentences.",
       "why": "Why it worked. One to three sentences, including the proof and who reported it.",
       "steal": "The transferable idea. One or two sentences.",
@@ -143,6 +144,7 @@ Field rules, all enforced by the checker:
 | `category`, `market` | Short labels, 24 and 28 characters or fewer. One country or region |
 | `tags` | 1 to 3, each 18 characters or fewer, describing the format |
 | `launched` | YYYY-MM-DD. `peaked` is optional and only for the case in step 4 |
+| `summary` | One sentence, 140 characters or fewer, ending in a full stop. It is the line shown after the brand and campaign name in the Slack message, as `Brand, "Campaign": summary`, so it must make sense on its own and must not repeat the brand or the campaign name. Say what was done, not who did it |
 | `did`, `why`, `steal` | 420, 300 and 260 characters or fewer |
 | `scores` | Whole numbers 1 to 5 |
 | `sources` | 2 or more, https, at least 2 different publications, labels 40 characters or fewer |

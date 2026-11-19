@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { build } from '../src/build.mjs';
 import { esc } from '../src/templates.mjs';
-import { issueMessage, failureMessage, send } from '../src/lib/slack.mjs';
+import { issueMessage, failureMessage, send, firstSentence, capLine, campaignLine } from '../src/lib/slack.mjs';
 import { ROOT, loadConfig } from '../src/lib/content.mjs';
 
 const config = loadConfig();
@@ -106,4 +106,38 @@ test('slack send posts JSON when a webhook is set, and surfaces errors', async (
 
 test('failure message carries the run link', () => {
   assert.match(failureMessage(config, 'https://example.test/run/1'), /did not publish[\s\S]*Details: https:\/\/example\.test\/run\/1/);
+});
+
+test('slack line uses the summary when there is one', () => {
+  const c = { brand: 'ChipsMore!', campaign: '18 Unrestricted', summary: 'A pack only younger gamers can buy.', did: 'ChipsMore! made a pack. More.' };
+  assert.equal(campaignLine(c), 'A pack only younger gamers can buy.');
+  const text = issueMessage(config, { number: 1, date: '2026-11-19', campaigns: [c] });
+  assert.ok(text.includes('1. ChipsMore!, "18 Unrestricted": A pack only younger gamers can buy.'));
+});
+
+test('without a summary, a brand ending in "!" does not cut the line short', () => {
+  const c = { brand: 'ChipsMore!', campaign: '18 Unrestricted', did: 'ChipsMore! made 18 Unrestricted, a limited pack for younger gamers. A QR code opens a Discord.' };
+  assert.equal(campaignLine(c), 'ChipsMore! made 18 Unrestricted, a limited pack for younger gamers.');
+  // Known limit: a name's own punctuation never ends a sentence, even at the end of one.
+  // The line runs on to the next real stop, which is why issues carry a summary field.
+  assert.equal(firstSentence('The pack is from ChipsMore! It sold out. More.', ['ChipsMore!']), 'The pack is from ChipsMore! It sold out.');
+});
+
+test('first sentence ignores punctuation inside names, abbreviations and decimals', () => {
+  assert.equal(firstSentence('Yahoo! and Yum! Brands opened a pop-up. It ran a week.', ['Yahoo!', 'Yum! Brands']), 'Yahoo! and Yum! Brands opened a pop-up.');
+  assert.equal(firstSentence('The "What? Why?" campaign ran in May. Then June.', ['What? Why?']), 'The "What? Why?" campaign ran in May.');
+  assert.equal(firstSentence('Sales rose 4.5 per cent on orders over $30.50 at kfc.com.au last week. Next.'), 'Sales rose 4.5 per cent on orders over $30.50 at kfc.com.au last week.');
+  assert.equal(firstSentence('One sentence only'), 'One sentence only');
+  assert.equal(firstSentence('Ends here. "Quoted start" follows.'), 'Ends here.');
+  assert.equal(firstSentence('A name with (brackets) and a + sign. Next.', ['(brackets)', '+']), 'A name with (brackets) and a + sign.');
+});
+
+test('long lines are capped at a word boundary', () => {
+  const long = `${'word '.repeat(60)}end.`;
+  const capped = capLine(long);
+  assert.ok(capped.length <= 160);
+  assert.ok(capped.endsWith('word...'));
+  assert.equal(capLine('Short line.'), 'Short line.');
+  const c = { brand: 'B', campaign: 'C', did: long };
+  assert.ok(campaignLine(c).length <= 160);
 });

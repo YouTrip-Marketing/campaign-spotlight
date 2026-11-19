@@ -5,7 +5,7 @@ import { isIsoDate, daysBetween } from './dates.mjs';
 
 const LIMITS = {
   headline: 90, brand: 40, campaign: 44, category: 24, market: 28,
-  tag: 18, did: 420, why: 300, steal: 260, sourceLabel: 40,
+  tag: 18, summary: 140, did: 420, why: 300, steal: 260, sourceLabel: 40,
 };
 const SCORE_KEYS = ['originality', 'craft', 'proof', 'stealable'];
 const BANNED_CHARS = [
@@ -70,8 +70,22 @@ function validateCampaign(errors, where, c, issueDate, windowDays, config) {
     errors.push(`${where}: must be an object`);
     return;
   }
-  for (const key of ['brand', 'campaign', 'category', 'market', 'did', 'why', 'steal']) {
+  for (const key of ['brand', 'campaign', 'category', 'market', 'summary', 'did', 'why', 'steal']) {
     checkText(errors, `${where}.${key}`, c[key], LIMITS[key]);
+  }
+
+  // The summary is the line shown after the brand and campaign name, so it must not repeat them.
+  if (typeof c.summary === 'string') {
+    const summary = ` ${normalise(c.summary)} `;
+    for (const key of ['brand', 'campaign']) {
+      const name = typeof c[key] === 'string' ? normalise(c[key]) : '';
+      if (name && summary.includes(` ${name} `)) {
+        errors.push(`${where}.summary: repeats the ${key} name "${c[key]}"`);
+      }
+    }
+    if (c.summary.trim() !== '' && !/[.!?]$/.test(c.summary.trim())) {
+      errors.push(`${where}.summary: must be one full sentence ending in a full stop`);
+    }
   }
 
   if (!Array.isArray(c.tags) || c.tags.length < 1 || c.tags.length > 3) {

@@ -13,6 +13,7 @@ function campaign(overrides = {}) {
     market: 'Singapore',
     tags: ['Stunt'],
     launched: '2026-11-25',
+    summary: 'A thing was done in a new way.',
     did: 'They did a thing.',
     why: 'It worked.',
     steal: 'Do the thing.',
@@ -214,4 +215,36 @@ test('helpers', () => {
   assert.equal(campaignKey('Café Néro', 'Bon & Bon'), 'cafe nero|bon and bon');
   assert.equal(canonicalUrl('https://www.site.com/a/b/?utm_campaign=z#top'), 'site.com/a/b');
   assert.equal(canonicalUrl('https://site.com/?p=12'), 'site.com?p=12');
+});
+
+test('summary is required, capped, and must not repeat the brand or campaign name', () => {
+  const missing = validIssues();
+  delete missing[0].data.campaigns[0].summary;
+  has(check(missing), /summary: required text is missing/);
+
+  const long = validIssues();
+  long[0].data.campaigns[0].summary = `${'x'.repeat(140)}.`;
+  has(check(long), /summary: 141 characters, limit is 140/);
+
+  const brand = validIssues();
+  brand[0].data.campaigns[0].summary = 'Acme sent tailors round on bicycles.';
+  has(check(brand), /summary: repeats the brand name "Acme"/);
+
+  const name = validIssues();
+  name[0].data.campaigns[0].summary = 'The test drive that comes to your door.';
+  has(check(name), /summary: repeats the campaign name "Test Drive"/);
+
+  const shout = validIssues();
+  shout[0].data.campaigns[0].brand = 'ChipsMore!';
+  shout[0].data.campaigns[0].summary = 'From ChipsMore, a pack only younger gamers can buy.';
+  has(check(shout), /summary: repeats the brand name "ChipsMore!"/);
+
+  const open = validIssues();
+  open[0].data.campaigns[0].summary = 'A line with no ending';
+  has(check(open), /summary: must be one full sentence/);
+
+  // A word that merely contains the brand is fine.
+  const inside = validIssues();
+  inside[0].data.campaigns[0].summary = 'Acmeville residents got a free repair visit.';
+  assert.deepEqual(check(inside), []);
 });
