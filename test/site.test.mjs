@@ -6,10 +6,12 @@ import { join } from 'node:path';
 import { build } from '../src/build.mjs';
 import { esc } from '../src/templates.mjs';
 import { issueMessage, failureMessage, send } from '../src/lib/slack.mjs';
-import { loadConfig, loadIssues } from '../src/lib/content.mjs';
+import { loadConfig, loadIssues, scheduleFrom } from '../src/lib/content.mjs';
+import { isIssueDay } from '../src/lib/schedule.mjs';
 
 const config = loadConfig();
 const issues = loadIssues().map((i) => i.data);
+const schedule = scheduleFrom(config);
 
 test('build writes every page, with noindex and no em dashes', () => {
   const outDir = mkdtempSync(join(tmpdir(), 'spotlight-'));
@@ -32,7 +34,12 @@ test('build writes every page, with noindex and no em dashes', () => {
       assert.ok(home.includes(esc(c.campaign)), c.campaign);
       for (const s of c.sources) assert.ok(home.includes(`href="${esc(s.url)}"`), s.url);
     }
-    assert.match(home, /Next issue Mon 30 Nov 2026/);
+    // The footer date depends on the issues in the repo, so check its properties, not a fixed date.
+    const next = home.match(/Next issue Mon (\d{1,2} \w{3} \d{4})/);
+    assert.ok(next, 'footer names a Monday');
+    const nextDate = new Date(`${next[1]} UTC`).toISOString().slice(0, 10);
+    assert.ok(isIssueDay(nextDate, schedule), `${nextDate} is an issue day`);
+    assert.ok(nextDate > latest.date && nextDate >= '2026-11-19', `${nextDate} is still ahead`);
   } finally {
     rmSync(outDir, { recursive: true, force: true });
   }
