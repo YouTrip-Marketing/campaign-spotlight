@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      check_all_links:
+        description: Check the source links of every issue, not only new ones
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -46,8 +51,11 @@ jobs:
       - name: Validate (structure for every issue, source links for new issues)
         env:
           NEW_FILES: ${{ steps.new.outputs.files }}
+          CHECK_ALL: ${{ inputs.check_all_links }}
         run: |
-          if [ -n "$NEW_FILES" ]; then
+          if [ "$CHECK_ALL" = "true" ]; then
+            node scripts/validate.mjs --links all
+          elif [ -n "$NEW_FILES" ]; then
             node scripts/validate.mjs --links $NEW_FILES
           else
             node scripts/validate.mjs

@@ -14,6 +14,7 @@ Scheduled routine (AI, outside this repo)        GitHub Actions (no AI, in this 
 
 1. **Routine.** A scheduled Claude session runs the prompt in [`routine/PROMPT.md`](routine/PROMPT.md) every Monday. The guard lets it through every second Monday. It researches, scores candidates against the rubric, writes `content/issues/<date>.json`, rebuilds the registry and pushes to `main`. There is no approval step.
 2. **Publish workflow.** [`.github/workflows/publish.yml`](.github/workflows/publish.yml) runs the unit tests, validates every issue, checks the source links of any issue added in the push, builds the static site and deploys it to GitHub Pages.
+   A manual run from the Actions tab ("Run workflow") rebuilds and redeploys, with an option to recheck every source link.
 3. **Slack.** If the push added a new issue, the workflow posts a short summary to Slack. If the run fails, it posts a short failure note. Both steps do nothing until the `SLACK_WEBHOOK_URL` repository secret is set.
 
 The routine is the only part that uses AI, and it can be swapped for a person: anyone can write an issue file by hand and push it.
