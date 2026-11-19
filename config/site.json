@@ -1,0 +1,13 @@
+{
+  "name": "Campaign Spotlight",
+  "url": "https://youtrip-marketing.github.io/campaign-spotlight/",
+  "timezone": "Asia/Singapore",
+  "anchorMonday": "2026-11-30",
+  "intervalWeeks": 2,
+  "graceDays": 2,
+  "minCampaigns": 2,
+  "maxCampaigns": 3,
+  "minTotalScore": 14,
+  "minOriginality": 4,
+  "windowDays": [14, 28]
+}

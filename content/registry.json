@@ -1,0 +1,36 @@
+{
+  "campaigns": [
+    {
+      "issue": "2026-11-19",
+      "brand": "Rockstar Games",
+      "campaign": "Welcome to Vice City",
+      "key": "rockstar games|welcome to vice city",
+      "sources": [
+        "https://fortune.com/2026/10/19/gta-6-miami-vice-city-rockstar-marketing-miami-dade-pushback/",
+        "https://cp24.com/news/entertainment/2026/11/17/miami-embraces-its-vice-city-alter-ego-seizing-buzz-around-gta-vi-release",
+        "https://www.adweek.com/brand-marketing/6-ways-brands-are-capturing-buzz-around-gta-6s-release/"
+      ]
+    },
+    {
+      "issue": "2026-11-19",
+      "brand": "ChipsMore!",
+      "campaign": "18 Unrestricted",
+      "key": "chipsmore|18 unrestricted",
+      "sources": [
+        "https://campaignbriefasia.com/2026/11/16/chipsmore-and-leo-indonesia-flip-the-age-check-for-younger-gamers-with-18-unrestricted/",
+        "https://adindex.ru/news/adyummy/2026/11/16/351251.phtml"
+      ]
+    },
+    {
+      "issue": "2026-11-19",
+      "brand": "KFC Thailand",
+      "campaign": "Dumb Luck",
+      "key": "kfc thailand|dumb luck",
+      "sources": [
+        "https://campaignbriefasia.com/2026/11/19/kfc-thailand-blends-japanese-manga-and-thai-humour-in-debut-title-dumb-luck/",
+        "https://www.brandbuffet.in.th/?p=309547",
+        "https://www.malaymail.com/news/money/mediaoutreach/2026/11/17/kfc-thailand-breaks-creative-boundaries-in-2026-with-bold-campaigns-and-its-first-ever-original-manga-dumb-luck/501573"
+      ]
+    }
+  ]
+}

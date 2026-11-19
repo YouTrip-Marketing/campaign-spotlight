@@ -1,0 +1,82 @@
+name: Publish
+
+# Runs on every push to main. No AI in here: it only checks, builds, deploys and notifies.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Find issue files added in this push
+        id: new
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          files=$(node scripts/new-issues.mjs "$BEFORE" "$AFTER" | tr '\n' ' ')
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+          echo "New issue files: ${files:-none}"
+
+      - name: Validate (structure for every issue, source links for new issues)
+        env:
+          NEW_FILES: ${{ steps.new.outputs.files }}
+        run: |
+          if [ -n "$NEW_FILES" ]; then
+            node scripts/validate.mjs --links $NEW_FILES
+          else
+            node scripts/validate.mjs
+          fi
+
+      - name: Build
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+      # Both Slack steps do nothing, successfully, while SLACK_WEBHOOK_URL is not set.
+      - name: Post the new issue to Slack
+        if: steps.new.outputs.files != ''
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          NEW_FILES: ${{ steps.new.outputs.files }}
+        run: node scripts/slack.mjs issue $NEW_FILES
+
+      - name: Tell Slack the run did not publish
+        if: failure()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: node scripts/slack.mjs failure "$RUN_URL"
