@@ -10,6 +10,10 @@ on:
         description: Check the source links of every issue, not only new ones
         type: boolean
         default: false
+      send_test_post:
+        description: Send the latest issue to Slack again as a test. Does not build or deploy
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -62,15 +66,19 @@ jobs:
           fi
 
       - name: Build
+        if: ${{ !inputs.send_test_post }}
         run: npm run build
 
       - uses: actions/configure-pages@v5
+        if: ${{ !inputs.send_test_post }}
 
       - uses: actions/upload-pages-artifact@v3
+        if: ${{ !inputs.send_test_post }}
         with:
           path: dist
 
       - name: Deploy to GitHub Pages
+        if: ${{ !inputs.send_test_post }}
         id: deploy
         uses: actions/deploy-pages@v4
 
@@ -82,8 +90,14 @@ jobs:
           NEW_FILES: ${{ steps.new.outputs.files }}
         run: node scripts/slack.mjs issue $NEW_FILES
 
+      - name: Send test post to Slack (manual run only)
+        if: ${{ inputs.send_test_post }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: node scripts/slack.mjs latest --require-webhook
+
       - name: Tell Slack the run did not publish
-        if: failure()
+        if: ${{ failure() && !inputs.send_test_post }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

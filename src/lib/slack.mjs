@@ -45,5 +45,5 @@ export async function send(webhookUrl, text, fetchImpl = fetch) {
     body: JSON.stringify({ text }),
   });
   if (!res.ok) throw new Error(`Slack returned HTTP ${res.status}`);
-  return { sent: true, reason: 'posted' };
+  return { sent: true, reason: `posted, Slack returned HTTP ${res.status}` };
 }
