@@ -31,27 +31,6 @@
         "https://www.brandbuffet.in.th/?p=309547",
         "https://www.malaymail.com/news/money/mediaoutreach/2026/11/17/kfc-thailand-breaks-creative-boundaries-in-2026-with-bold-campaigns-and-its-first-ever-original-manga-dumb-luck/501573"
       ]
-    },
-    {
-      "issue": "2026-11-30",
-      "brand": "Yam Bank",
-      "campaign": "Fresh Idea",
-      "key": "yam bank|fresh idea",
-      "sources": [
-        "https://www.marketingweek.com/total-eclipse-jaffa-cakes/",
-        "https://www.creativeboom.com/news/oslos-grumpiest-resident-returns-new-halfdan-winter-campaign-generates-5m-views/"
-      ]
-    },
-    {
-      "issue": "2026-11-30",
-      "brand": "Zed Cola",
-      "campaign": "Dead Link Test",
-      "key": "zed cola|dead link test",
-      "sources": [
-        "https://campaignbriefasia.com/2026/11/16/this-article-does-not-exist-xyz/",
-        "https://no-such-host-campaign-spotlight.invalid/a",
-        "https://www.marketingweek.com/mcdonalds-home-alone-campaign/"
-      ]
     }
   ]
 }
