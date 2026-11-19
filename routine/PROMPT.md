@@ -62,6 +62,8 @@ Then use web search to widen the net and to corroborate. Useful queries: "campai
 
 These sites refused automated requests when last tested, so do not rely on reading them directly, though search may still surface their stories: Famous Campaigns, Ad Age, MARKETECH APAC, LBBOnline, TrendHunter, AdForum, Best Ads on TV, Campaign Live UK, Ads of the World, and some article pages on Creative Review and AP member sites. The Branding.news feed stopped updating in 2022; ignore it.
 
+Marketing Week is good for finding candidates, but it answers the publish workflow's link check with HTTP 403 (seen 19 Nov 2026). A Marketing Week link is reported as a warning and does not count towards the two confirmed links, so any campaign you find there needs two other sources that load. Sources whose links did pass the publish check on that date: Fortune, CP24, Adweek, Campaign Brief Asia, Creative Boom, Brand Buffet, Malay Mail, AdIndex.
+
 Aim for a longlist of 10 to 15 candidates before you judge. Look past the home market: a strong idea from Bangkok, Kuala Lumpur or Almaty is as welcome as one from London or New York.
 
 ## Step 4. Check each candidate
