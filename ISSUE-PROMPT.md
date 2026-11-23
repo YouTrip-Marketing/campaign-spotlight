@@ -111,17 +111,7 @@ Create `issueFile` with exactly this shape. The values below are examples; `numb
   "date": "2026-11-23",
   "headline": "One line that names all the campaigns by their idea, not their brand",
   "windowDays": 14,
-  "takeaways": {
-    "worked": [
-      { "text": "A pattern two or more of the picks share, with the concrete examples.", "campaigns": [1, 3] }
-    ],
-    "picked": [
-      { "criterion": "originality", "text": "The standout idea that earned campaign 1 its place." }
-    ],
-    "adapt": [
-      "A short, general idea any team could put in an idea bank."
-    ]
-  },
+  "summaryParagraph": "Three to five sentences: what worked across the picks, then the standout idea that got each one picked.",
   "campaigns": [
     {
       "brand": "Brand name",
@@ -159,7 +149,7 @@ Field rules, all enforced by the checker:
 | `did`, `why`, `steal` | 420, 300 and 260 characters or fewer |
 | `scores` | Whole numbers 1 to 5 |
 | `sources` | 2 or more, https, at least 2 different publications, labels 40 characters or fewer |
-| `takeaways` | Required. See step 6a |
+| `summaryParagraph` | Required. 90 words and 600 characters or fewer, ends in a full stop. See step 6a |
 
 Writing rules:
 
@@ -172,15 +162,15 @@ Writing rules:
 
 Order the campaigns by total score, highest first.
 
-## Step 6a. Write the takeaways
+## Step 6a. Write the summary paragraph
 
-Write `takeaways` last, once the campaigns are final and in order. It is the "What worked this issue" block at the top of the page, and its `worked` lines go into the Slack message, so readers can lift ideas into an idea bank without reading every card.
+Write `summaryParagraph` last, once the campaigns are final and in order. It is shown under the posters as "This issue in short" and goes into the Slack message after the numbered list, so readers can lift ideas into an idea bank without reading every card.
 
-- `worked`: 2 to 4 patterns that run across the picks, most useful first (Slack shows the first 3). Each one names at least two campaigns by their position in `campaigns` (1 is the first card) and gives the concrete example from each. 130 characters or fewer, one sentence ending in a full stop.
-- `picked`: exactly one entry per campaign, in the same order. `criterion` is that campaign's highest-scoring criterion (any of them on a tie); `text` names the standout idea that earned the place. 130 characters or fewer, ending in a full stop.
-- `adapt`: 3 to 5 short, imperative ideas for an idea bank. General and reusable: never name a featured brand or campaign, a specific company's plans, or the publisher of this digest. 130 characters or fewer each, ending in a full stop. Reworking the "steal" lines is fine.
-
-Every takeaway must trace to a fact already in that issue's campaign entries. No new facts, numbers or claims, and keep "planned" things planned. If a campaign has no results yet, do not say it "worked" on results; say what the idea did.
+- 3 to 5 plain sentences, 90 words or fewer, ending in a full stop. Prose, not a list.
+- Open with what worked across the picks: the pattern they share, with the concrete example from each.
+- Then the standout idea that got each campaign picked, in the order of the cards. Tie it to the criterion that scored highest where that reads naturally ("picked for craft").
+- Every claim must trace to a fact already in that issue's campaign entries. No new facts, numbers or claims, and keep "planned" things planned. If a campaign has no results yet, do not say it "worked" on results; say what the idea did.
+- Never mention the publisher of this digest or address a particular reader.
 
 ## Step 7. Check and push
 
@@ -204,4 +194,4 @@ Do not open a pull request. Do not edit any other file. If the push is rejected 
 
 ## Step 8. Report
 
-Reply with: the issue number and date, each campaign with its scores and sources, the takeaways, every candidate you rejected with a one line reason, and whether you used the 14 or 28 day window. If you wrote no issue, say so first.
+Reply with: the issue number and date, each campaign with its scores and sources, the summary paragraph, every candidate you rejected with a one line reason, and whether you used the 14 or 28 day window. If you wrote no issue, say so first.

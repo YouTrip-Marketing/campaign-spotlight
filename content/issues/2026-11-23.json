@@ -3,52 +3,7 @@
   "date": "2026-11-23",
   "headline": "A city dressed as its game, cookies adults cannot buy and a break hidden in code",
   "windowDays": 14,
-  "takeaways": {
-    "worked": [
-      {
-        "text": "One big game release, worked from both ends: dress the real city it is set in, or serve the players too young for it.",
-        "campaigns": [
-          1,
-          2
-        ]
-      },
-      {
-        "text": "A rule or habit becomes the trigger: an age check turns into the reward, an equals sign turns into a break.",
-        "campaigns": [
-          2,
-          3
-        ]
-      },
-      {
-        "text": "Each shows up where people already are: landmarks they already photograph, a coding tool they already use.",
-        "campaigns": [
-          1,
-          3
-        ]
-      }
-    ],
-    "picked": [
-      {
-        "criterion": "craft",
-        "text": "Every piece was a landmark: a giant sign lowered onto an arena, 10 new murals and a themed NBA game night."
-      },
-      {
-        "criterion": "originality",
-        "text": "It flips the age check: the pack is for players too young for the game, with bouncers set to check ID."
-      },
-      {
-        "criterion": "originality",
-        "text": "The break hides inside the work: equals signs in AI-written code count up to a break and a voucher."
-      }
-    ],
-    "adapt": [
-      "Look at who a big cultural moment leaves out, then make something only they can get.",
-      "Find a rule or gate your audience knows and flip it, so the usual outsiders are the ones let in.",
-      "Pick a symbol or action people repeat all day and make it the trigger for your brand moment.",
-      "Dress a few real places properly, with local partners who gain from the attention, instead of many scattered placements.",
-      "Deliver a small utility inside a tool people already use, so there is nothing new to install."
-    ]
-  },
+  "summaryParagraph": "Each pick turns something people already see or do into the brand moment: landmarks they photograph, an age check that usually shuts them out, the code they write. Rockstar was picked for craft, dressing the real city its game is set in with an arena sign, 10 new murals and a themed NBA game night. ChipsMore! was picked for flipping the age check, with a pack for players too young for the game. KitKat Vietnam was picked for hiding a break inside AI-written code, triggered by equals signs.",
   "campaigns": [
     {
       "brand": "Rockstar Games",

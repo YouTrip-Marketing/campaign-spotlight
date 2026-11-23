@@ -92,48 +92,14 @@ function card(c, slot) {
     </article>`;
 }
 
-const CRITERION_LABEL = { originality: 'Originality', craft: 'Craft', proof: 'Proof', stealable: 'Stealable' };
-
-/** "What worked this issue": cross-campaign patterns, why each was picked, ideas to adapt. */
-function takeaways(issue) {
-  const t = issue.takeaways;
-  if (!t || typeof t !== 'object') return '';
-  const list = issue.campaigns;
-  const chip = (n) => {
-    const c = list[n - 1];
-    return c ? `<span class="p${n}">${n} ${esc(c.brand)}</span>` : '';
-  };
-  const worked = (t.worked ?? []).map((w) => `          <li><p>${esc(w.text)}</p><div class="who mono">${(w.campaigns ?? []).map(chip).join('')}</div></li>`);
-  const picked = (t.picked ?? []).map((p, i) => {
-    const c = list[i];
-    if (!c) return '';
-    const score = c.scores?.[p.criterion];
-    return `          <li><div class="pk mono"><span class="dot p${i + 1}">${i + 1}</span><b>${esc(c.brand)}</b><em>${esc(CRITERION_LABEL[p.criterion] ?? p.criterion)} ${esc(score)}/5</em></div><p>${esc(p.text)}</p></li>`;
-  }).filter(Boolean);
-  const adapt = (t.adapt ?? []).map((a) => `          <li>${esc(a)}</li>`);
+/** Short prose summary under the posters. Nothing when the issue has none. */
+function inShort(issue) {
+  const text = typeof issue.summaryParagraph === 'string' ? issue.summaryParagraph.trim() : '';
+  if (!text) return '';
   return `
-  <section class="sum" aria-labelledby="sum-h">
-    <h2 id="sum-h" class="mono">What worked this issue</h2>
-    <div class="cols">
-      <div class="col worked">
-        <h3 class="mono">What worked</h3>
-        <ul>
-${worked.join('\n')}
-        </ul>
-      </div>
-      <div class="col picked">
-        <h3 class="mono">Why these were picked</h3>
-        <ul>
-${picked.join('\n')}
-        </ul>
-      </div>
-      <div class="col adapt">
-        <h3 class="mono">Ideas to adapt</h3>
-        <ol>
-${adapt.join('\n')}
-        </ol>
-      </div>
-    </div>
+  <section class="short" aria-labelledby="short-h">
+    <h2 id="short-h" class="mono">This issue in short</h2>
+    <p>${esc(text)}</p>
   </section>
 `;
 }
@@ -150,13 +116,13 @@ ${rail(issues, root, issue.date)}
       <h1>${esc(issue.headline)}</h1>
     </div>
   </section>
-${takeaways(issue)}
+
   <section class="grid${issue.campaigns.length === 2 ? ' two' : ''}">
 
 ${cards}
 
   </section>
-
+${inShort(issue)}
 ${foot(site, root)}
 `;
   return page({ site, root, body, title: `${site.name} · Issue ${pad(issue.number)}` });

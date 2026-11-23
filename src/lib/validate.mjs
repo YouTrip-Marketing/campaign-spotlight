@@ -6,9 +6,9 @@ import { isIsoDate, daysBetween } from './dates.mjs';
 const LIMITS = {
   headline: 90, brand: 40, campaign: 44, category: 24, market: 28,
   tag: 18, summary: 140, did: 420, why: 300, steal: 260, sourceLabel: 40,
-  worked: 130, picked: 130, adapt: 130,
+  summaryParagraph: 600,
 };
-const TAKEAWAY_COUNTS = { worked: [2, 4], adapt: [3, 5] };
+const SUMMARY_PARAGRAPH_WORDS = 90;
 // Generic words in the publishing organisation's name that are fine to use in copy.
 const GENERIC_OWNER_WORDS = new Set(['marketing', 'team', 'org', 'hq', 'labs', 'studio', 'github', 'io']);
 const SCORE_KEYS = ['originality', 'craft', 'proof', 'stealable'];
@@ -77,7 +77,7 @@ function mentions(text, name) {
 
 /**
  * Words from the publishing organisation's name (the GitHub Pages owner in config.url).
- * The digest is about other brands, so takeaways must never talk about the publisher.
+ * The digest is about other brands, so the summary paragraph must never talk about the publisher.
  */
 export function ownerWords(config) {
   try {
@@ -88,92 +88,18 @@ export function ownerWords(config) {
   }
 }
 
-function checkSentence(errors, where, value, max) {
-  checkText(errors, where, value, max);
-  if (typeof value === 'string' && value.trim() !== '' && !/[.!?]$/.test(value.trim())) {
-    errors.push(`${where}: must end in a full stop`);
-  }
-}
-
 /**
- * Issue-level "What worked this issue" block.
- *   worked: 2 to 4 cross-campaign patterns, each naming 2 or more campaigns by number (1 = first card)
- *   picked: one entry per campaign, in campaign order, naming its highest-scoring criterion
- *   adapt:  3 to 5 brand-neutral idea prompts
+ * Issue-level summary paragraph, shown under the posters and in the Slack message:
+ * what worked across the picks and the standout idea that got each one picked.
  */
-function validateTakeaways(errors, where, t, campaigns, config) {
-  if (t === null || typeof t !== 'object' || Array.isArray(t)) {
-    errors.push(`${where}: required. Add worked, picked and adapt`);
-    return;
-  }
-  const n = campaigns.length;
-  const banned = ownerWords(config);
-  const allText = [];
-
-  const [wMin, wMax] = TAKEAWAY_COUNTS.worked;
-  if (!Array.isArray(t.worked) || t.worked.length < wMin || t.worked.length > wMax) {
-    errors.push(`${where}.worked: needs ${wMin} to ${wMax} patterns`);
-  } else {
-    t.worked.forEach((w, i) => {
-      const at = `${where}.worked[${i}]`;
-      checkSentence(errors, `${at}.text`, w?.text, LIMITS.worked);
-      allText.push([`${at}.text`, w?.text]);
-      const refs = w?.campaigns;
-      const ok = Array.isArray(refs) && refs.every((r) => Number.isInteger(r) && r >= 1 && r <= n);
-      if (!ok) {
-        errors.push(`${at}.campaigns: must list campaign numbers from 1 to ${n}`);
-      } else if (new Set(refs).size !== refs.length) {
-        errors.push(`${at}.campaigns: lists a campaign twice`);
-      } else if (refs.length < 2) {
-        errors.push(`${at}.campaigns: a pattern must name at least 2 campaigns`);
-      }
-    });
-  }
-
-  if (!Array.isArray(t.picked) || t.picked.length !== n) {
-    errors.push(`${where}.picked: needs one entry per campaign (${n}), in campaign order`);
-  } else {
-    t.picked.forEach((p, i) => {
-      const at = `${where}.picked[${i}]`;
-      checkSentence(errors, `${at}.text`, p?.text, LIMITS.picked);
-      allText.push([`${at}.text`, p?.text]);
-      const scores = campaigns[i]?.scores;
-      if (!SCORE_KEYS.includes(p?.criterion)) {
-        errors.push(`${at}.criterion: must be one of ${SCORE_KEYS.join(', ')}`);
-      } else if (scores && typeof scores === 'object') {
-        const top = Math.max(...SCORE_KEYS.map((k) => (Number.isInteger(scores[k]) ? scores[k] : 0)));
-        if (scores[p.criterion] !== top) {
-          errors.push(`${at}.criterion: "${p.criterion}" scored ${scores[p.criterion]}, name the highest-scoring criterion (${top})`);
-        }
-      }
-    });
-  }
-
-  const [aMin, aMax] = TAKEAWAY_COUNTS.adapt;
-  if (!Array.isArray(t.adapt) || t.adapt.length < aMin || t.adapt.length > aMax) {
-    errors.push(`${where}.adapt: needs ${aMin} to ${aMax} ideas`);
-  } else {
-    t.adapt.forEach((a, i) => {
-      const at = `${where}.adapt[${i}]`;
-      checkSentence(errors, at, a, LIMITS.adapt);
-      allText.push([at, a]);
-      if (typeof a !== 'string') return;
-      // Ideas for an idea bank are brand-neutral: no featured brand or campaign name.
-      for (const c of campaigns) {
-        for (const key of ['brand', 'campaign']) {
-          if (typeof c?.[key] === 'string' && mentions(a, c[key])) {
-            errors.push(`${at}: names the ${key} "${c[key]}", keep ideas brand-neutral`);
-          }
-        }
-      }
-    });
-  }
-
-  for (const [at, text] of allText) {
-    if (typeof text !== 'string') continue;
-    for (const word of banned) {
-      if (mentions(text, word)) errors.push(`${at}: mentions the publisher, takeaways are about the featured campaigns only`);
-    }
+function validateSummaryParagraph(errors, where, value, config) {
+  checkText(errors, where, value, LIMITS.summaryParagraph);
+  if (typeof value !== 'string' || value.trim() === '') return;
+  const words = value.trim().split(/\s+/).length;
+  if (words > SUMMARY_PARAGRAPH_WORDS) errors.push(`${where}: ${words} words, limit is ${SUMMARY_PARAGRAPH_WORDS}`);
+  if (!/[.!?]$/.test(value.trim())) errors.push(`${where}: must end in a full stop`);
+  for (const word of ownerWords(config)) {
+    if (mentions(value, word)) errors.push(`${where}: mentions the publisher, keep it about the featured campaigns`);
   }
 }
 
@@ -300,7 +226,7 @@ export function validateAll(issues, registry, config) {
       return;
     }
 
-    validateTakeaways(errors, `${where}.takeaways`, data.takeaways, list, config);
+    validateSummaryParagraph(errors, `${where}.summaryParagraph`, data.summaryParagraph, config);
 
     list.forEach((c, i) => {
       const at = `${where}.campaigns[${i}]`;

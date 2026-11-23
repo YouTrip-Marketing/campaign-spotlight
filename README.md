@@ -1,6 +1,6 @@
 # Campaign Spotlight
 
-A digest of standout marketing campaigns and product launches. Each issue features two or three campaigns: what they did, why it worked, and the idea worth stealing. A "What worked this issue" block at the top pulls out the patterns across the picks, why each was picked, and ideas to adapt.
+A digest of standout marketing campaigns and product launches. Each issue features two or three campaigns: what they did, why it worked, and the idea worth stealing. A short "This issue in short" paragraph under the posters says what worked across the picks and why each was picked.
 
 Site: https://youtrip-marketing.github.io/campaign-spotlight/
 
@@ -16,7 +16,7 @@ Editor (AI or a person, outside this repo)       GitHub Actions (no AI, in this 
 2. **Publish workflow.** [`.github/workflows/publish.yml`](.github/workflows/publish.yml) runs the unit tests, validates every issue, checks the source links of any issue added in the push, builds the static site and deploys it to GitHub Pages.
    A manual run from the Actions tab ("Run workflow") rebuilds and redeploys, with an option to recheck every source link.
    To send a test post, run the workflow by hand with "send_test_post" ticked (or `gh workflow run publish.yml -f send_test_post=true`). It posts the latest issue to Slack again and does not build or deploy. It fails with a clear message when the secret is not set.
-3. **Slack.** Slack posting is off unless the `SLACK_WEBHOOK_URL` repository secret is set. With it set, a push that adds a new issue posts a short summary (one line per campaign, then a "What worked" block of up to 3 lines) and a failed run posts a short note. Without it, `npm run slack-message` prints the same summary for the latest issue, ready to paste by hand.
+3. **Slack.** Slack posting is off unless the `SLACK_WEBHOOK_URL` repository secret is set. With it set, a push that adds a new issue posts a short summary (one line per campaign, then the summary paragraph) and a failed run posts a short note. Without it, `npm run slack-message` prints the same summary for the latest issue, ready to paste by hand.
 
 The editor step is the only part that uses AI, and it can be done by a person: anyone can write an issue file by hand and push it.
 
@@ -31,7 +31,7 @@ Validation fails, and nothing is deployed or posted, when:
 - a campaign is older than the issue's window (14 or 28 days)
 - an issue has fewer than 2 or more than 3 campaigns
 - copy is missing, over length, or contains an em dash or en dash
-- the takeaways are missing or malformed: 2 to 4 patterns that each name 2 or more campaigns, one "picked" line per campaign naming its highest-scoring criterion, 3 to 5 ideas to adapt that name no featured brand or campaign
+- the summary paragraph is missing, over 90 words or 600 characters, does not end in a full stop, or mentions the publisher
 - the file name, date and issue number disagree, or `content/registry.json` is out of date
 
 Sites that refuse automated requests (HTTP 401, 403, 429, 5xx, timeouts) are reported as warnings. They do not fail an issue on their own, but they do not count towards the 2 working links.

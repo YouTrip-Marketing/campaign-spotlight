@@ -3,43 +3,7 @@
   "date": "2026-11-23",
   "headline": "Fixture headline for tests",
   "windowDays": 14,
-  "takeaways": {
-    "worked": [
-      {
-        "text": "Fixture pattern one.",
-        "campaigns": [
-          1,
-          2
-        ]
-      },
-      {
-        "text": "Fixture pattern two.",
-        "campaigns": [
-          2,
-          3
-        ]
-      }
-    ],
-    "picked": [
-      {
-        "criterion": "craft",
-        "text": "Fixture pick one."
-      },
-      {
-        "criterion": "originality",
-        "text": "Fixture pick two."
-      },
-      {
-        "criterion": "stealable",
-        "text": "Fixture pick three."
-      }
-    ],
-    "adapt": [
-      "Fixture idea one.",
-      "Fixture idea two.",
-      "Fixture idea three."
-    ]
-  },
+  "summaryParagraph": "Fixture summary of what worked across the picks. Each one was picked for one standout idea.",
   "campaigns": [
     {
       "brand": "Fixture Brand 1",
