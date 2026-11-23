@@ -26,8 +26,29 @@ function campaign(overrides = {}) {
   };
 }
 
+function takeaways(campaigns) {
+  const top = (c) => ['originality', 'craft', 'proof', 'stealable'].reduce((a, k) => (c.scores[k] > c.scores[a] ? k : a), 'originality');
+  return {
+    worked: [
+      { text: 'A shared pattern.', campaigns: [1, 2] },
+      { text: 'Another shared pattern.', campaigns: [1, 2] },
+    ],
+    picked: campaigns.map((c) => ({ criterion: top(c), text: 'Picked for this idea.' })),
+    adapt: ['Borrow a moment.', 'Flip a familiar gate.', 'Hide the message inside a habit.'],
+  };
+}
+
 function issue(date, number, campaigns) {
-  return { file: `${date}.json`, data: { number, date, headline: 'A headline', windowDays: 14, campaigns } };
+  const data = { number, date, headline: 'A headline', windowDays: 14, campaigns };
+  // A getter keeps picked[] in step with campaigns pushed or popped by a test.
+  let override;
+  let overridden = false;
+  Object.defineProperty(data, 'takeaways', {
+    enumerable: true,
+    get: () => (overridden ? override : takeaways(data.campaigns)),
+    set: (v) => { override = v; overridden = true; },
+  });
+  return { file: `${date}.json`, data };
 }
 
 function validIssues() {
@@ -247,4 +268,68 @@ test('summary is required, capped, and must not repeat the brand or campaign nam
   const inside = validIssues();
   inside[0].data.campaigns[0].summary = 'Acmeville residents got a free repair visit.';
   assert.deepEqual(check(inside), []);
+});
+
+test('takeaways are required on every issue', () => {
+  const issues = validIssues();
+  issues[0].data.takeaways = undefined;
+  has(check(issues), /takeaways: required/);
+});
+
+test('takeaways counts are enforced', () => {
+  const t = (over) => { const i = validIssues(); i[0].data.takeaways = { ...takeaways(i[0].data.campaigns), ...over }; return check(i); };
+  has(t({ worked: [{ text: 'Only one.', campaigns: [1, 2] }] }), /worked: needs 2 to 4 patterns/);
+  has(t({ adapt: ['One idea.', 'Two ideas.'] }), /adapt: needs 3 to 5 ideas/);
+  has(t({ adapt: ['A.', 'B.', 'C.', 'D.', 'E.', 'F.'] }), /adapt: needs 3 to 5 ideas/);
+  has(t({ picked: [{ criterion: 'originality', text: 'Just one.' }] }), /picked: needs one entry per campaign \(2\)/);
+});
+
+test('a pattern must name 2 or more real campaigns, each once', () => {
+  const t = (campaigns) => { const i = validIssues(); const tk = takeaways(i[0].data.campaigns); tk.worked[0].campaigns = campaigns; i[0].data.takeaways = tk; return check(i); };
+  has(t([1]), /worked\[0\]\.campaigns: a pattern must name at least 2 campaigns/);
+  has(t([1, 3]), /must list campaign numbers from 1 to 2/);
+  has(t([1, 1]), /lists a campaign twice/);
+  has(t('1,2'), /must list campaign numbers/);
+});
+
+test('picked must name the highest-scoring criterion', () => {
+  const issues = validIssues();
+  const tk = takeaways(issues[0].data.campaigns);
+  tk.picked[0].criterion = 'proof';
+  issues[0].data.takeaways = tk;
+  has(check(issues), /picked\[0\]\.criterion: "proof" scored 3, name the highest-scoring criterion \(4\)/);
+
+  tk.picked[0].criterion = 'vibes';
+  has(check(issues), /picked\[0\]\.criterion: must be one of/);
+
+  // A tie at the top: either tied criterion is accepted.
+  tk.picked[0].criterion = 'craft';
+  assert.deepEqual(check(issues), []);
+});
+
+test('takeaways copy follows the copy rules', () => {
+  const issues = validIssues();
+  const tk = takeaways(issues[0].data.campaigns);
+  tk.worked[1].text = 'Both ran \u2014 fast.';
+  tk.picked[1].text = 'No full stop';
+  tk.adapt[0] = `${'x'.repeat(130)}.`;
+  issues[0].data.takeaways = tk;
+  const errors = check(issues);
+  has(errors, /worked\[1\]\.text: contains an em dash/);
+  has(errors, /picked\[1\]\.text: must end in a full stop/);
+  has(errors, /adapt\[0\]: 131 characters, limit is 130/);
+});
+
+test('ideas to adapt are brand-neutral and never mention the publisher', () => {
+  const issues = validIssues();
+  const tk = takeaways(issues[0].data.campaigns);
+  tk.adapt[0] = 'Copy what Acme did.';
+  tk.adapt[1] = 'Run your own night shift.';
+  const owner = new URL(config.url).hostname.split('.')[0].split('-')[0];
+  tk.worked[0].text = `A lesson for ${owner}.`;
+  issues[0].data.takeaways = tk;
+  const errors = check(issues);
+  has(errors, /adapt\[0\]: names the brand "Acme"/);
+  has(errors, /adapt\[1\]: names the campaign "Night Shift"/);
+  has(errors, /worked\[0\]\.text: mentions the publisher/);
 });

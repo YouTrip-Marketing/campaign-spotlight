@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { build } from '../src/build.mjs';
 import { esc } from '../src/templates.mjs';
-import { issueMessage, failureMessage, send, firstSentence, capLine, campaignLine } from '../src/lib/slack.mjs';
+import { issueMessage, failureMessage, send, firstSentence, capLine, campaignLine, workedLines } from '../src/lib/slack.mjs';
 import { ROOT, loadConfig } from '../src/lib/content.mjs';
 
 const config = loadConfig();
@@ -140,4 +140,60 @@ test('long lines are capped at a word boundary', () => {
   assert.equal(capLine('Short line.'), 'Short line.');
   const c = { brand: 'B', campaign: 'C', did: long };
   assert.ok(campaignLine(c).length <= 160);
+});
+
+test('issue page shows the takeaways above the posters', () => {
+  const root = tempRepo(issues);
+  const outDir = join(root, 'dist');
+  try {
+    build({ root, outDir });
+    const html = readFileSync(join(outDir, 'issues', fixture.date, 'index.html'), 'utf8');
+    const sum = html.indexOf('What worked this issue');
+    assert.ok(sum > -1, 'no takeaways section');
+    assert.ok(sum < html.indexOf('class="grid'), 'takeaways must sit above the posters');
+    for (const h of ['What worked', 'Why these were picked', 'Ideas to adapt']) assert.ok(html.includes(h), h);
+    for (const w of fixture.takeaways.worked) assert.ok(html.includes(esc(w.text)), w.text);
+    for (const a of fixture.takeaways.adapt) assert.ok(html.includes(esc(a)), a);
+    assert.ok(html.includes('Craft 5/5'), 'picked shows the criterion and score');
+    assert.ok(html.includes('<span class="p2">2 Fixture Brand 2</span>'), 'patterns name their campaigns');
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('an issue without takeaways still builds, with no empty section', () => {
+  const { takeaways: _drop, ...bare } = fixture;
+  const root = tempRepo([bare]);
+  const outDir = join(root, 'dist');
+  try {
+    build({ root, outDir });
+    const html = readFileSync(join(outDir, 'index.html'), 'utf8');
+    assert.ok(!html.includes('What worked this issue'));
+    assert.ok(!html.includes('undefined'));
+  } finally {
+    rmSync(root, { recursive: true, force: true });
+  }
+});
+
+test('slack message has a short What worked block between the list and the link', () => {
+  const text = issueMessage(config, fixture);
+  const lines = text.split('\n');
+  const at = lines.indexOf('What worked:');
+  const lastItem = lines.findLastIndex((l) => /^\d\. /.test(l));
+  const link = lines.findIndex((l) => l.startsWith('Read the issue: '));
+  assert.ok(lastItem < at && at < link, 'block sits after the numbered list and before the link');
+  assert.deepEqual(lines.slice(at + 1, at + 3), ['- Fixture pattern one. (1, 2)', '- Fixture pattern two. (2, 3)']);
+  assert.equal(lines[at + 3], '');
+  assert.ok(!text.includes('*') && !/[\u2013\u2014]/.test(text));
+});
+
+test('slack What worked block caps at 3 lines and 160 characters, and is skipped without takeaways', () => {
+  const many = { takeaways: { worked: [1, 2, 3, 4].map((n) => ({ text: `${'word '.repeat(40)}${n}.`, campaigns: [1, 2] })) } };
+  const lines = workedLines(many);
+  assert.equal(lines.length, 4);
+  assert.ok(lines.slice(1).every((l) => l.length <= 160));
+  assert.deepEqual(workedLines({}), []);
+  const text = issueMessage(config, { number: 1, date: '2026-11-19', campaigns: [{ brand: 'B', campaign: 'C', summary: 'S.' }] });
+  assert.ok(!text.includes('What worked'));
+  assert.ok(text.endsWith(`Read the issue: ${config.url}issues/2026-11-19/`));
 });

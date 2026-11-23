@@ -46,16 +46,36 @@ export function issueUrl(config, issue) {
   return `${config.url.replace(/\/+$/, '')}/issues/${issue.date}/`;
 }
 
+const WORKED_LINES = 3;
+
+/**
+ * The short "What worked" block: up to 3 cross-campaign patterns, each followed by the
+ * numbers of the campaigns that show it, matching the numbered list above it.
+ * Empty when the issue has no takeaways (older issues, tests).
+ */
+export function workedLines(issue) {
+  const worked = Array.isArray(issue?.takeaways?.worked) ? issue.takeaways.worked : [];
+  const lines = worked.slice(0, WORKED_LINES)
+    .filter((w) => typeof w?.text === 'string' && w.text.trim() !== '')
+    .map((w) => {
+      const refs = Array.isArray(w.campaigns) && w.campaigns.length ? ` (${w.campaigns.join(', ')})` : '';
+      return capLine(`- ${w.text.trim()}${refs}`);
+    });
+  return lines.length ? ['What worked:', ...lines] : [];
+}
+
 export function issueMessage(config, issue) {
   const number = String(issue.number).padStart(2, '0');
   const lines = issue.campaigns.map(
     (c, i) => `${i + 1}. ${c.brand}, "${c.campaign}": ${campaignLine(c)}`,
   );
+  const worked = workedLines(issue);
   return [
     `${config.name}, Issue ${number} (${formatDateLong(issue.date)})`,
     '',
     ...lines,
     '',
+    ...(worked.length ? [...worked, ''] : []),
     `Read the issue: ${issueUrl(config, issue)}`,
   ].join('\n');
 }
