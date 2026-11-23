@@ -17,7 +17,8 @@ const result = nextIssue({ today, existingIssueDates: loadIssues().map((i) => i.
 const out = { today, ...result };
 if (result.run) {
   out.issueFile = `content/issues/${result.issueDate}.json`;
-  out.window14From = addDays(result.issueDate, -config.windowDays[0]);
-  out.window28From = addDays(result.issueDate, -config.windowDays[1]);
+  // Launch dates from windowFrom to issueDate inclusive qualify: windowDays days in all.
+  out.windowDays = config.windowDays;
+  out.windowFrom = addDays(result.issueDate, -(config.windowDays - 1));
 }
 console.log(JSON.stringify(out, null, 2));

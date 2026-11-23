@@ -103,7 +103,21 @@ function validateSummaryParagraph(errors, where, value, config) {
   }
 }
 
-function validateCampaign(errors, where, c, issueDate, windowDays, config) {
+/**
+ * Recency rules for an issue. Issues dated on or before config.legacyRecency.throughDate
+ * keep the original rules (14 or 28 day window, peaked allowed, age up to windowDays).
+ * Every later issue: launched within the config.windowDays days up to and including the
+ * issue date (age 0 to windowDays - 1), windowDays must equal config.windowDays, no peaked.
+ */
+export function recencyRules(config, issueDate) {
+  const legacy = config.legacyRecency;
+  if (legacy && isIsoDate(legacy.throughDate) && isIsoDate(issueDate) && issueDate <= legacy.throughDate) {
+    return { legacy: true, windowDays: legacy.windowDays, allowPeaked: Boolean(legacy.allowPeaked), maxAge: (w) => w };
+  }
+  return { legacy: false, windowDays: [config.windowDays], allowPeaked: false, maxAge: (w) => w - 1 };
+}
+
+function validateCampaign(errors, where, c, issueDate, windowDays, config, rules) {
   if (c === null || typeof c !== 'object') {
     errors.push(`${where}: must be an object`);
     return;
@@ -132,18 +146,21 @@ function validateCampaign(errors, where, c, issueDate, windowDays, config) {
     c.tags.forEach((tag, i) => checkText(errors, `${where}.tags[${i}]`, tag, LIMITS.tag));
   }
 
+  if (c.peaked !== undefined && !rules.allowPeaked) {
+    errors.push(`${where}.peaked: not allowed. Recency is judged on launched only (the earliest public appearance)`);
+  }
   for (const key of ['launched', 'peaked']) {
-    if (key === 'peaked' && c.peaked === undefined) continue;
+    if (key === 'peaked' && (c.peaked === undefined || !rules.allowPeaked)) continue;
     if (!isIsoDate(c[key])) errors.push(`${where}.${key}: must be a YYYY-MM-DD date`);
   }
   if (isIsoDate(c.launched) && isIsoDate(c.peaked) && daysBetween(c.launched, c.peaked) < 0) {
     errors.push(`${where}.peaked: is before launched`);
   }
-  const recencyDate = c.peaked ?? c.launched;
+  const recencyDate = rules.allowPeaked ? (c.peaked ?? c.launched) : c.launched;
   if (isIsoDate(recencyDate) && isIsoDate(issueDate) && Number.isInteger(windowDays)) {
     const age = daysBetween(recencyDate, issueDate);
     if (age < 0) errors.push(`${where}: ${recencyDate} is after the issue date`);
-    if (age > windowDays) {
+    if (age > rules.maxAge(windowDays)) {
       errors.push(`${where}: ${recencyDate} is ${age} days before the issue date, window is ${windowDays} days`);
     }
   }
@@ -216,8 +233,9 @@ export function validateAll(issues, registry, config) {
       errors.push(`${where}: number is ${data.number}, expected ${index + 1} (issues are numbered in date order)`);
     }
     checkText(errors, `${where}.headline`, data.headline, LIMITS.headline);
-    if (!config.windowDays.includes(data.windowDays)) {
-      errors.push(`${where}.windowDays: must be one of ${config.windowDays.join(', ')}`);
+    const rules = recencyRules(config, data.date);
+    if (!rules.windowDays.includes(data.windowDays)) {
+      errors.push(`${where}.windowDays: must be ${rules.windowDays.length === 1 ? rules.windowDays[0] : `one of ${rules.windowDays.join(', ')}`}`);
     }
 
     const list = data.campaigns;
@@ -230,7 +248,8 @@ export function validateAll(issues, registry, config) {
 
     list.forEach((c, i) => {
       const at = `${where}.campaigns[${i}]`;
-      validateCampaign(errors, at, c, data.date, data.windowDays, config);
+      // After the cutoff the window is always config.windowDays, whatever the issue file says.
+      validateCampaign(errors, at, c, data.date, rules.legacy ? data.windowDays : config.windowDays, config, rules);
       if (!c || typeof c.brand !== 'string' || typeof c.campaign !== 'string') return;
 
       const key = campaignKey(c.brand, c.campaign);

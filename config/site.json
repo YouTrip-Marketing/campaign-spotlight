@@ -6,8 +6,14 @@
   "maxCampaigns": 3,
   "minTotalScore": 14,
   "minOriginality": 4,
-  "windowDays": [
-    14,
-    28
-  ]
+  "windowDays": 14,
+  "legacyRecency": {
+    "throughDate": "2026-11-23",
+    "windowDays": [
+      14,
+      28
+    ],
+    "allowPeaked": true,
+    "note": "Issues dated on or before throughDate keep the original rules: a 14 or 28 day window counted back from the issue date, judged on peaked when present. Every later issue: launched within the 14 days up to and including the issue date, no peaked, no 28 day window."
+  }
 }

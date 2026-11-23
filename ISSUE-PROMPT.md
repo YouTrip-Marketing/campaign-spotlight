@@ -32,7 +32,7 @@ If `"run": true`, note these values and use them exactly:
 - `issueDate`: today. It is also the file name.
 - `issueNumber`: the next number in sequence. The first issue is 1.
 - `issueFile`
-- `window14From` and `window28From`: the earliest launch dates allowed for the 14 day and 28 day windows, counted back from today.
+- `windowFrom`: the earliest launch date allowed. The window is the 14 days from `windowFrom` up to and including `issueDate`. There is no wider window.
 
 ## Step 2. Read what has already run
 
@@ -72,7 +72,7 @@ Aim for a longlist of 10 to 15 candidates before you judge. Look past the home m
 
 A candidate goes forward only if all of these hold.
 
-1. **Recency.** It launched on or after `window14From`, and not after `issueDate`. Use the earliest publication date you can find across your sources as the launch date, not the date of the article you happened to find first. Trade sites often write up campaigns weeks late. If a campaign started earlier but its main moment (the launch it was building to, the event day) fell inside the window, record both `launched` and `peaked`; recency is then judged on `peaked`. Do not use `peaked` for a campaign that is merely still being written about.
+1. **Recency.** Its launch date falls within the 14 days up to and including `issueDate`: on or after `windowFrom`, and not after `issueDate`. The launch date is the earliest public appearance of the campaign across all your sources (the earliest article, post, press release or official announcement), not the date of the article you happened to find first. Trade sites often write campaigns up days or weeks late, so always look for the earliest date before you accept a candidate. A campaign that launched before `windowFrom` does not qualify, even if its main moment, a later phase or new coverage falls inside the window. There are no exceptions and no wider window.
 2. **Two sources you opened.** At least two different publications, each of which you opened and read in this run. A search result snippet is not a source. The same press release on two sites counts once, unless at least one of them adds its own reporting. A paid press release wire can be a third source but never one of the two. Label a non-English source with its language, and a press release as such.
 3. **Links that load.** Each source link returns the article to a plain request without a login. If a site blocks you, find another source for the same facts. The publish workflow rejects dead links and needs two confirmed working links per campaign.
 4. **Not a repeat.** Not in the registry, if the registry has entries.
@@ -95,7 +95,7 @@ A campaign from the last few days will rarely have results. A Proof score of 2 i
 
 Pick the top three by total. Limits on the mix: at most two from one category, and at most two that ride the same cultural moment (for example the same film or game release).
 
-If fewer than three qualify inside 14 days, widen to `window28From` and look again, and set `windowDays` to 28 in the issue. Otherwise set it to 14.
+Always set `windowDays` to 14. If fewer than three qualify, do not widen the window or relax any rule:
 
 - Three qualify: publish three.
 - Two qualify: publish two. Do not pad with a weaker third.
@@ -120,7 +120,6 @@ Create `issueFile` with exactly this shape. The values below are examples; `numb
       "market": "Malaysia",
       "tags": ["Packaging", "Retail"],
       "launched": "2026-11-12",
-      "peaked": "2026-11-19",
       "summary": "One sentence that stands alone and does not name the brand or campaign.",
       "did": "What they did. Two to four plain sentences.",
       "why": "Why it worked. One to three sentences, including the proof and who reported it.",
@@ -140,11 +139,12 @@ Field rules, all enforced by the checker:
 | Field | Rule |
 |---|---|
 | `number`, `date` | From the step 1 output |
+| `windowDays` | Always 14 |
 | `headline` | 90 characters or fewer |
 | `brand`, `campaign` | 40 and 44 characters or fewer. Use the campaign's real name. If it has none, use the words on the work itself |
 | `category`, `market` | Short labels, 24 and 28 characters or fewer. One country or region |
 | `tags` | 1 to 3, each 18 characters or fewer, describing the format |
-| `launched` | YYYY-MM-DD. `peaked` is optional and only for the case in step 4 |
+| `launched` | YYYY-MM-DD, the earliest public appearance across your sources (step 4). There is no `peaked` field: the checker rejects it |
 | `summary` | One sentence, 140 characters or fewer, ending in a full stop. It is the line shown after the brand and campaign name in the Slack message, as `Brand, "Campaign": summary`, so it must make sense on its own and must not repeat the brand or the campaign name. Say what was done, not who did it |
 | `did`, `why`, `steal` | 420, 300 and 260 characters or fewer |
 | `scores` | Whole numbers 1 to 5 |
@@ -194,4 +194,4 @@ Do not open a pull request. Do not edit any other file. If the push is rejected 
 
 ## Step 8. Report
 
-Reply with: the issue number and date, each campaign with its scores and sources, the summary paragraph, every candidate you rejected with a one line reason, and whether you used the 14 or 28 day window. If you wrote no issue, say so first.
+Reply with: the issue number and date, each campaign with its scores and sources, the summary paragraph, each campaign's launch date with the source that dates it, and every candidate you rejected with a one line reason (for a recency rejection, give its earliest launch date). If you wrote no issue, say so first and list what fell short.

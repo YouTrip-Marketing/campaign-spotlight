@@ -151,26 +151,81 @@ test('scores below the bar are blocked', () => {
   has(check(bad), /scores\.craft: must be a whole number from 1 to 5/);
 });
 
-test('recency window is enforced, using peaked when present', () => {
+test('strict window: launched within the 14 days up to and including the issue date', () => {
+  // Issue date 2026-11-30: 2026-11-17 to 2026-11-30 qualify.
+  const edge = validIssues();
+  edge[0].data.campaigns[0].launched = '2026-11-17';
+  assert.deepEqual(check(edge), []);
+
+  const today = validIssues();
+  today[0].data.campaigns[0].launched = '2026-11-30';
+  assert.deepEqual(check(today), []);
+
   const old = validIssues();
-  old[0].data.campaigns[0].launched = '2026-11-10';
-  has(check(old), /20 days before the issue date, window is 14 days/);
-
-  old[0].data.windowDays = 28;
-  assert.deepEqual(check(old), []);
-
-  const peaked = validIssues();
-  peaked[0].data.campaigns[0].launched = '2026-09-01';
-  peaked[0].data.campaigns[0].peaked = '2026-11-28';
-  assert.deepEqual(check(peaked), []);
+  old[0].data.campaigns[0].launched = '2026-11-16';
+  has(check(old), /2026-11-16 is 14 days before the issue date, window is 14 days/);
 
   const future = validIssues();
   future[0].data.campaigns[0].launched = '2026-12-05';
   has(check(future), /is after the issue date/);
+});
+
+test('strict window: no 28 day fallback after the cutoff', () => {
+  const wide = validIssues();
+  wide[0].data.windowDays = 28;
+  wide[0].data.campaigns[0].launched = '2026-11-10';
+  const errors = check(wide);
+  has(errors, /windowDays: must be 14$/);
+  has(errors, /2026-11-10 is 20 days before the issue date, window is 14 days/);
 
   const odd = validIssues();
   odd[0].data.windowDays = 60;
-  has(check(odd), /windowDays: must be one of 14, 28/);
+  has(check(odd), /windowDays: must be 14$/);
+});
+
+test('strict window: peaked is rejected and does not rescue an old launch', () => {
+  const peaked = validIssues();
+  peaked[0].data.campaigns[0].launched = '2026-09-22';
+  peaked[0].data.campaigns[0].peaked = '2026-11-28';
+  const errors = check(peaked);
+  has(errors, /campaigns\[0\]\.peaked: not allowed/);
+  has(errors, /2026-09-22 is 69 days before the issue date/);
+
+  const recent = validIssues();
+  recent[0].data.campaigns[0].peaked = '2026-11-28';
+  has(check(recent), /peaked: not allowed/);
+});
+
+test('issues on or before the cutoff keep the original rules', () => {
+  assert.equal(config.legacyRecency.throughDate, '2026-11-23');
+  const legacy = [issue('2026-11-23', 1, [
+    campaign({ launched: '2026-09-22', peaked: '2026-11-19' }),
+    campaign({ brand: 'Bolt', campaign: 'Night Shift', launched: '2026-10-27', sources: [
+      { label: 'One', url: 'https://one.example.com/b' },
+      { label: 'Three', url: 'https://three.example.com/b' },
+    ] }),
+  ])];
+  legacy[0].data.windowDays = 28;
+  assert.deepEqual(check(legacy), []);
+
+  // The same issue a day after the cutoff fails on every loophole.
+  const later = [issue('2026-11-24', 1, legacy[0].data.campaigns)];
+  later[0].data.windowDays = 28;
+  const errors = check(later);
+  has(errors, /windowDays: must be 14$/);
+  has(errors, /peaked: not allowed/);
+  has(errors, /2026-10-27 is 28 days before the issue date/);
+
+  // Without a cutoff in config every issue gets the strict rules.
+  const { legacyRecency: _drop, ...strictConfig } = config;
+  has(validateAll(legacy, buildRegistry(legacy), strictConfig), /peaked: not allowed/);
+});
+
+test('Issue 01 as committed passes under the cutoff', () => {
+  const first = loadIssues().find((i) => i.file === '2026-11-23.json');
+  assert.ok(first, 'Issue 01 is in the repo');
+  assert.ok(first.data.campaigns.some((c) => c.peaked), 'Issue 01 still uses peaked, so this test proves the grandfathering');
+  assert.deepEqual(validateAll([first], buildRegistry([first]), config), []);
 });
 
 test('em and en dashes are blocked in copy', () => {

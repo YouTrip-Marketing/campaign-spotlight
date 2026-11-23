@@ -28,7 +28,7 @@ Validation fails, and nothing is deployed or posted, when:
 - a source link is dead (404, 410, host not found), or fewer than 2 of a campaign's links can be confirmed working
 - a campaign, or a source link, already appeared in an earlier issue
 - a score total is under 14 of 20, or Originality is under 4
-- a campaign is older than the issue's window (14 or 28 days)
+- a campaign launched more than 14 days before the issue date: its `launched` date must fall within the 14 days up to and including the issue date. There is no wider window and no `peaked` exception. Issue 01 (23 Nov 2026) was published under the earlier rules (a 28 day fallback and `peaked`) and is kept as it is by the `legacyRecency.throughDate` cutoff in `config/site.json`
 - an issue has fewer than 2 or more than 3 campaigns
 - copy is missing, over length, or contains an em dash or en dash
 - the summary paragraph is missing, over 90 words or 600 characters, does not end in a full stop, or mentions the publisher
@@ -40,7 +40,7 @@ If only 2 campaigns clear the bar, the issue runs with 2. If 0 or 1 clear it, no
 
 ## When issues go out
 
-On demand. An issue is dated the day it is written, in Singapore time whatever clock the machine runs on, and numbered next in sequence. `npm run next-issue` reports the date, number and recency windows (14 days back from today, widening to 28), and refuses a second issue on the same day.
+On demand. An issue is dated the day it is written, in Singapore time whatever clock the machine runs on, and numbered next in sequence. `npm run next-issue` reports the date, number and the recency window (`windowFrom`: launches from that date up to and including today, 14 days in all), and refuses a second issue on the same day.
 
 ## Run it locally
 
@@ -48,7 +48,7 @@ Node 20 or later. No dependencies to install.
 
 ```
 npm test                  # unit tests
-npm run next-issue        # date, number and windows for an issue written today
+npm run next-issue        # date, number and recency window for an issue written today
 npm run validate          # structure checks
 npm run validate:links    # structure checks plus every source link
 npm run registry          # rebuild content/registry.json from the issues
@@ -61,7 +61,7 @@ To preview: `npm run build`, then serve `dist/` with any static server.
 ## Layout
 
 ```
-config/site.json         site name, URL, timezone, rubric thresholds
+config/site.json         site name, URL, timezone, rubric thresholds, recency window and the Issue 01 cutoff
 content/issues/          one JSON file per issue, named by date
 content/registry.json    every campaign featured so far (generated)
 ISSUE-PROMPT.md          the prompt for researching and writing an issue
