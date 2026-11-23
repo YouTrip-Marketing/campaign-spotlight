@@ -1,18 +1,19 @@
 {
   "campaigns": [
     {
-      "issue": "2026-11-19",
-      "brand": "City of Gothenburg",
-      "campaign": "Hemlagat",
-      "key": "city of gothenburg|hemlagat",
+      "issue": "2026-11-23",
+      "brand": "Rockstar Games",
+      "campaign": "Welcome to Vice City",
+      "key": "rockstar games|welcome to vice city",
       "sources": [
-        "https://www.thestable.com.au/bbdo-nordics-city-of-gothenburg-cycling-tailors-replace-the-urge-to-black-week-purchase-with-at-home-repairs/",
-        "https://www.dagensps.se/foretag/kommun-skickar-gratis-skraddare-vill-fa-folk-sluta-kopa-nytt/",
-        "https://www.metromode.se/mode/goteborg-skickar-ut-gratis-skraddare-under-black-week-vill-att-du-lagar-i-stallet-for-koper-nytt/"
+        "https://fortune.com/2026/10/19/gta-6-miami-vice-city-rockstar-marketing-miami-dade-pushback/",
+        "https://cp24.com/news/entertainment/2026/11/17/miami-embraces-its-vice-city-alter-ego-seizing-buzz-around-gta-vi-release",
+        "https://www.adweek.com/brand-marketing/6-ways-brands-are-capturing-buzz-around-gta-6s-release/",
+        "https://www.si.com/nba/heat/heat-hit-big-grand-theft-auto-vi-inspired-makeover-other-teams-should-pay-attention"
       ]
     },
     {
-      "issue": "2026-11-19",
+      "issue": "2026-11-23",
       "brand": "ChipsMore!",
       "campaign": "18 Unrestricted",
       "key": "chipsmore|18 unrestricted",
@@ -20,28 +21,6 @@
         "https://campaignbriefasia.com/2026/11/16/chipsmore-and-leo-indonesia-flip-the-age-check-for-younger-gamers-with-18-unrestricted/",
         "https://www.contentgrip.com/chipsmore-gta-discord-gaming/",
         "https://adindex.ru/news/adyummy/2026/11/16/351251.phtml"
-      ]
-    },
-    {
-      "issue": "2026-11-19",
-      "brand": "KFC Australia",
-      "campaign": "Funeral for Ann Alibi",
-      "key": "kfc australia|funeral for ann alibi",
-      "sources": [
-        "https://www.mediaweek.com.au/kfc-stages-funeral-gta-vi-fans-alibi",
-        "https://www.dexerto.com/gta/kfc-is-hosting-a-fake-funeral-so-gta-6-fans-can-take-the-day-off-3428598",
-        "https://campaignbrief.com/kfc-australia-holds-a-fake-funeral-for-ann-alibi-so-gamers-can-skip-work-for-gta-vi/"
-      ]
-    },
-    {
-      "issue": "2026-11-23",
-      "brand": "AnNahar",
-      "campaign": "The Proud Political Parties Edition",
-      "key": "annahar|the proud political parties edition",
-      "sources": [
-        "https://campaignbriefasia.com/2026/11/17/annahar-and-impact-bbdo-turn-lebanons-rival-political-party-colours-into-a-pride-flag/",
-        "https://www.israelnationalnews.com/news/436425",
-        "https://www.annahar.com/lebanon/366778/%D9%85%D9%84%D9%81-%D8%AE%D8%A7%D8%B5-%D9%85%D9%86-%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%B1"
       ]
     },
     {
@@ -54,16 +33,6 @@
         "https://www.bandt.com.au/kitkat-debugs-developers-workdays-with-a-break-reminder-via-leo-vietnam/",
         "https://www.marketing-interactive.com/kitkat-vietnam-turns-lines-of-code-into-break-reminders-for-developers",
         "https://wersm.com/?p=122787"
-      ]
-    },
-    {
-      "issue": "2026-11-23",
-      "brand": "Specsavers UK",
-      "campaign": "Biggest Partnership of All Time",
-      "key": "specsavers uk|biggest partnership of all time",
-      "sources": [
-        "https://www.creativebloq.com/news/the-specsavers-gta-6-campaign-is-hilariously-on-brand",
-        "https://www.mediaweek.com.au/specsavers-unveils-biggest-partnership-of-all-time-with-gta"
       ]
     }
   ]

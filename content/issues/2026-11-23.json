@@ -1,25 +1,84 @@
 {
-  "number": 2,
+  "number": 1,
   "date": "2026-11-23",
-  "headline": "Rival party colours as a rainbow, a break hidden in code and a deal with the wrong GTA",
+  "headline": "A city dressed as its game, cookies adults cannot buy and a break hidden in code",
   "windowDays": 14,
   "campaigns": [
     {
-      "brand": "AnNahar",
-      "campaign": "The Proud Political Parties Edition",
-      "category": "News media",
-      "market": "Lebanon",
-      "tags": ["Front page", "Advocacy", "Print"],
-      "launched": "2026-11-16",
-      "summary": "A newspaper front page arranged rival political parties' colours into a rainbow to call for repeal of a law used against gay people.",
-      "did": "On the International Day for Tolerance, the Beirut daily ran a front page that set the colours of Lebanon's rival political parties side by side as a rainbow, under the line that Article 534 is not natural. The 1943 law has been used to prosecute same-sex relations. Inside, the paper surveyed the parties on repeal and carried LGBT citizens' own accounts.",
-      "why": "It turned symbols that usually mark division into one shared image, and used a paper's own front page as the medium. Israel National News called it a striking intervention for a major Arabic-language daily. No measured results are out yet.",
-      "steal": "Take the visual codes of groups who never agree and combine them into one image that makes your point. Use a channel you already own as the stage, rather than buying space.",
-      "scores": { "originality": 5, "craft": 5, "proof": 3, "stealable": 2 },
+      "brand": "Rockstar Games",
+      "campaign": "Welcome to Vice City",
+      "category": "Gaming",
+      "market": "USA",
+      "tags": [
+        "Out of home",
+        "Partnerships",
+        "Launch"
+      ],
+      "launched": "2026-09-22",
+      "peaked": "2026-11-19",
+      "summary": "A real city was dressed as the game world set in it, from an arena rooftop sign to new murals and an NBA team's themed game night.",
+      "did": "Before Grand Theft Auto VI came out on 19 November, Rockstar dressed the real Miami as the game's Vice City. A helicopter lowered a giant pink \"Welcome to Vice City\" sign onto the Miami Heat's arena and a deal with Wynwood Walls brought 10 new murals made for the game. On the eve of release the Heat played the Bucks in Vice City uniforms on a custom court.",
+      "why": "The game is set in a version of a real city, so the city became the media. Each piece is a landmark people already photograph. Adweek, citing Sensor Tower, put preorders past $1.5 billion the day before release, and Sports Illustrated, citing ESPN, says game-night gear sold out within 90 minutes.",
+      "steal": "Find the place where your product's world already exists and dress it, with local partners who gain from the attention. A few landmarks done properly beat many scattered placements.",
+      "scores": {
+        "originality": 4,
+        "craft": 5,
+        "proof": 5,
+        "stealable": 3
+      },
       "sources": [
-        { "label": "Campaign Brief Asia", "url": "https://campaignbriefasia.com/2026/11/17/annahar-and-impact-bbdo-turn-lebanons-rival-political-party-colours-into-a-pride-flag/" },
-        { "label": "Israel National News", "url": "https://www.israelnationalnews.com/news/436425" },
-        { "label": "AnNahar (Arabic)", "url": "https://www.annahar.com/lebanon/366778/%D9%85%D9%84%D9%81-%D8%AE%D8%A7%D8%B5-%D9%85%D9%86-%D8%A7%D9%84%D9%86%D9%87%D8%A7%D8%B1" }
+        {
+          "label": "Fortune",
+          "url": "https://fortune.com/2026/10/19/gta-6-miami-vice-city-rockstar-marketing-miami-dade-pushback/"
+        },
+        {
+          "label": "AP via CP24",
+          "url": "https://cp24.com/news/entertainment/2026/11/17/miami-embraces-its-vice-city-alter-ego-seizing-buzz-around-gta-vi-release"
+        },
+        {
+          "label": "Adweek",
+          "url": "https://www.adweek.com/brand-marketing/6-ways-brands-are-capturing-buzz-around-gta-6s-release/"
+        },
+        {
+          "label": "Sports Illustrated",
+          "url": "https://www.si.com/nba/heat/heat-hit-big-grand-theft-auto-vi-inspired-makeover-other-teams-should-pay-attention"
+        }
+      ]
+    },
+    {
+      "brand": "ChipsMore!",
+      "campaign": "18 Unrestricted",
+      "category": "Snacks",
+      "market": "Malaysia",
+      "tags": [
+        "Packaging",
+        "Community",
+        "Retail"
+      ],
+      "launched": "2026-11-16",
+      "summary": "A limited-edition cookie pack for gamers too young for the 18+ game GTA VI, with a QR code that opens a private Discord community.",
+      "did": "ChipsMore! made 18 Unrestricted, a limited-edition cookie pack for gamers too young for the 18+ game GTA VI. A QR code behind the label opens a private Discord community where Malaysian gaming personalities are set to share tips for games such as Mobile Legends: Bang Bang and PUBG Mobile. The packs are to be sold at booths in Lotus's stores, where bouncers will check MyKad identity documents.",
+      "why": "Most brands chased the adults playing on launch day. This one picked the audience left out and turned the age check, usually a barrier, into the reward. No results are out yet, and ContentGrip notes that any effect on store traffic is unreported.",
+      "steal": "Look at who a big cultural moment excludes and build something only they can get. Reversing a familiar gate, so the usual outsiders are the ones let in, gives people a story to retell.",
+      "scores": {
+        "originality": 5,
+        "craft": 4,
+        "proof": 2,
+        "stealable": 4
+      },
+      "sources": [
+        {
+          "label": "Campaign Brief Asia",
+          "url": "https://campaignbriefasia.com/2026/11/16/chipsmore-and-leo-indonesia-flip-the-age-check-for-younger-gamers-with-18-unrestricted/"
+        },
+        {
+          "label": "ContentGrip",
+          "url": "https://www.contentgrip.com/chipsmore-gta-discord-gaming/"
+        },
+        {
+          "label": "AdIndex (Russian)",
+          "url": "https://adindex.ru/news/adyummy/2026/11/16/351251.phtml"
+        }
       ]
     },
     {
@@ -27,35 +86,39 @@
       "campaign": "Kit=Code",
       "category": "Confectionery",
       "market": "Vietnam",
-      "tags": ["AI tool", "Utility", "Voucher"],
+      "tags": [
+        "AI tool",
+        "Utility",
+        "Voucher"
+      ],
       "launched": "2026-11-09",
       "summary": "A prompt for AI coding assistants counts every equals sign a developer generates and prompts a break once enough pile up.",
       "did": "Developers copy a prompt from a microsite into their AI coding assistant. It runs alongside the session and counts the equals signs in the code, since two parallel lines look like two KitKat fingers. At set thresholds a break reminder appears, and at the final one the developer gets a GrabMart voucher for KitKat.",
       "why": "The insight is that fast AI code removes the natural pauses in a coder's day. The brand line arrives inside the work instead of beside it. B&T, Marketing-Interactive and WeRSM covered it; no results are out yet.",
       "steal": "Find a symbol or action your audience repeats all day and make it trigger your brand moment. Deliver a small utility through a tool people already use, so there is nothing new to install.",
-      "scores": { "originality": 5, "craft": 4, "proof": 2, "stealable": 4 },
+      "scores": {
+        "originality": 5,
+        "craft": 4,
+        "proof": 2,
+        "stealable": 4
+      },
       "sources": [
-        { "label": "Campaign Brief Asia", "url": "https://campaignbriefasia.com/2026/11/09/leo-vietnam-launches-kitcode-for-kitkat-to-encourage-breaks-during-ai-coding-sessions/" },
-        { "label": "B&T", "url": "https://www.bandt.com.au/kitkat-debugs-developers-workdays-with-a-break-reminder-via-leo-vietnam/" },
-        { "label": "Marketing-Interactive", "url": "https://www.marketing-interactive.com/kitkat-vietnam-turns-lines-of-code-into-break-reminders-for-developers" },
-        { "label": "WeRSM", "url": "https://wersm.com/?p=122787" }
-      ]
-    },
-    {
-      "brand": "Specsavers UK",
-      "campaign": "Biggest Partnership of All Time",
-      "category": "Optical retail",
-      "market": "United Kingdom",
-      "tags": ["Social", "Trendjacking", "Sponsorship"],
-      "launched": "2026-11-18",
-      "summary": "An optician teased a huge GTA partnership as the game launched, then revealed it had sponsored a haulage firm with the same initials.",
-      "did": "As GTA VI arrived, Specsavers announced its biggest partnership of all time with GTA. The partner turned out to be GTA Transport Ltd, a haulage firm in Leicester. The brand's sponsorships lead said a deal is a deal and offered every GTA Transport driver a free eye test.",
-      "why": "The mix-up acts out the brand's long-running line about people who should have gone to Specsavers, so the joke needs no explaining. Creative Bloq called it a rare exception to lazy trendjacking, and Mediaweek reported commenters praising the stunt.",
-      "steal": "When everyone chases the same moment, find a smaller namesake and make the mistake the story. It works best when the joke proves your existing slogan.",
-      "scores": { "originality": 4, "craft": 4, "proof": 3, "stealable": 4 },
-      "sources": [
-        { "label": "Creative Bloq", "url": "https://www.creativebloq.com/news/the-specsavers-gta-6-campaign-is-hilariously-on-brand" },
-        { "label": "Mediaweek", "url": "https://www.mediaweek.com.au/specsavers-unveils-biggest-partnership-of-all-time-with-gta" }
+        {
+          "label": "Campaign Brief Asia",
+          "url": "https://campaignbriefasia.com/2026/11/09/leo-vietnam-launches-kitcode-for-kitkat-to-encourage-breaks-during-ai-coding-sessions/"
+        },
+        {
+          "label": "B&T",
+          "url": "https://www.bandt.com.au/kitkat-debugs-developers-workdays-with-a-break-reminder-via-leo-vietnam/"
+        },
+        {
+          "label": "Marketing-Interactive",
+          "url": "https://www.marketing-interactive.com/kitkat-vietnam-turns-lines-of-code-into-break-reminders-for-developers"
+        },
+        {
+          "label": "WeRSM",
+          "url": "https://wersm.com/?p=122787"
+        }
       ]
     }
   ]
